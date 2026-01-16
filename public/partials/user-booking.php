@@ -205,7 +205,7 @@ if (isset($_POST['shb_cancel_booking']) && wp_verify_nonce($_POST['shb_cancel_no
 					class="shb-badge shb-badge-info"><?php esc_html_e('Multi-Day Booking', 'simple-hall-booking-manager'); ?></span>
 				<span><?php
 				/* translators: %d: number of days */
-				echo sprintf(_n('%d day selected', '%d days selected', count($booking_dates), 'simple-hall-booking-manager'), count($booking_dates)); ?></span>
+				echo esc_html(sprintf(_n('%d day selected', '%d days selected', count($booking_dates), 'simple-hall-booking-manager'), count($booking_dates))); ?></span>
 			</div>
 
 			<div class="shb-table-responsive">
@@ -224,7 +224,7 @@ if (isset($_POST['shb_cancel_booking']) && wp_verify_nonce($_POST['shb_cancel_no
 								<td>
 									<?php
 									if ($bd_slot) {
-										echo '<span class="shb-time-badge">' . esc_html(date('g:i A', strtotime($bd_slot->start_time)) . ' - ' . date('g:i A', strtotime($bd_slot->end_time))) . '</span>';
+										echo '<span class="shb-time-badge">' . esc_html(wp_date('g:i A', strtotime($bd_slot->start_time)) . ' - ' . wp_date('g:i A', strtotime($bd_slot->end_time))) . '</span>';
 										echo '<br><small class="shb-slot-name">' . esc_html($bd_slot->label) . '</small>';
 									} else {
 										echo '-';
@@ -240,16 +240,16 @@ if (isset($_POST['shb_cancel_booking']) && wp_verify_nonce($_POST['shb_cancel_no
 			<div class="shb-single-date-display">
 				<div class="shb-big-date">
 					<span
-						class="shb-day"><?php echo !empty($booking_dates) ? esc_html(date('d', strtotime($booking_dates[0]->booking_date))) : '-'; ?></span>
+						class="shb-day"><?php echo !empty($booking_dates) ? esc_html(wp_date('d', strtotime($booking_dates[0]->booking_date))) : '-'; ?></span>
 					<span
-						class="shb-month-year"><?php echo !empty($booking_dates) ? esc_html(date('M Y', strtotime($booking_dates[0]->booking_date))) : '-'; ?></span>
+						class="shb-month-year"><?php echo !empty($booking_dates) ? esc_html(wp_date('M Y', strtotime($booking_dates[0]->booking_date))) : '-'; ?></span>
 				</div>
 				<div class="shb-time-info">
 					<div class="shb-time-row">
 						<span class="shb-icon">🕒</span>
 						<?php
 						if ($slot) {
-							echo '<strong>' . esc_html(date('g:i A', strtotime($slot->start_time)) . ' - ' . date('g:i A', strtotime($slot->end_time))) . '</strong>';
+							echo '<strong>' . esc_html(wp_date('g:i A', strtotime($slot->start_time)) . ' - ' . wp_date('g:i A', strtotime($slot->end_time))) . '</strong>';
 						} else {
 							echo '-';
 						}
@@ -265,7 +265,7 @@ if (isset($_POST['shb_cancel_booking']) && wp_verify_nonce($_POST['shb_cancel_no
 
 	<div class="shb-booked-on">
 		<?php esc_html_e('Booked on:', 'simple-hall-booking-manager'); ?>
-		<?php echo esc_html(shb_format_date($booking->created_at) . ' ' . date('g:i A', strtotime($booking->created_at))); ?>
+		<?php echo esc_html(shb_format_date($booking->created_at) . ' ' . wp_date('g:i A', strtotime($booking->created_at))); ?>
 	</div>
 
 	<!-- Actions -->

@@ -16,7 +16,7 @@ $hall = $hall_id ? $db->get_hall($hall_id) : null;
 $slots = $hall_id ? $db->get_slots_by_hall($hall_id) : array();
 
 if (!$hall) {
-	wp_die(__('Hall not found.', 'simple-hall-booking-manager'));
+	wp_die(esc_html__('Hall not found.', 'simple-hall-booking-manager'));
 }
 
 $title = $hall->title;
@@ -90,9 +90,9 @@ $error_message = isset($_GET['error_message']) ? urldecode(sanitize_text_field($
 								</td>
 								<td><?php echo esc_html($slot->label); ?></td>
 								<td>
-									<?php echo esc_html(date('g:i A', strtotime($slot->start_time))); ?>
+									<?php echo esc_html(wp_date('g:i A', strtotime($slot->start_time))); ?>
 									&ndash;
-									<?php echo esc_html(date('g:i A', strtotime($slot->end_time))); ?>
+									<?php echo esc_html(wp_date('g:i A', strtotime($slot->end_time))); ?>
 								</td>
 								<td>
 									<?php echo $slot->is_active ? esc_html__('Active', 'simple-hall-booking-manager') : esc_html__('Inactive', 'simple-hall-booking-manager'); ?>

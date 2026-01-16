@@ -20,6 +20,10 @@ if (!$booking) {
 
 $hall = $db->get_hall($booking->hall_id);
 
+if (!$hall) {
+	wp_die(esc_html__('Hall not found.', 'simple-hall-booking-manager'));
+}
+
 // Get booking dates (works for both single and multi-day bookings)
 $booking_dates = $db->get_booking_dates($booking->id);
 $slot = null;
@@ -76,7 +80,7 @@ if ('pending' === $booking->status) {
 			<p>
 				<?php
 				/* translators: %d: number of conflicts */
-				printf(esc_html__('This booking conflicts with %d other booking(s). If you approve this booking, the conflicting pending bookings will be automatically cancelled.', 'simple-hall-booking-manager'), count($conflicts));
+				printf(esc_html__('This booking conflicts with %d other booking(s). If you approve this booking, the conflicting pending bookings will be automatically cancelled.', 'simple-hall-booking-manager'), absint(count($conflicts)));
 				?>
 			</p>
 			<ul>
@@ -125,7 +129,7 @@ if ('pending' === $booking->status) {
 				<td>
 					<?php
 					if ($slot) {
-						echo esc_html($slot->label . ' (' . date('g:i A', strtotime($slot->start_time)) . ' - ' . date('g:i A', strtotime($slot->end_time)) . ')');
+						echo esc_html($slot->label . ' (' . wp_date('g:i A', strtotime($slot->start_time)) . ' - ' . wp_date('g:i A', strtotime($slot->end_time)) . ')');
 					} else {
 						echo '-';
 					}
@@ -153,7 +157,7 @@ if ('pending' === $booking->status) {
 						<div style="margin-bottom: 10px;">
 							<strong><?php
 							/* translators: %d: number of days */
-							echo sprintf(_n('%d day', '%d days', count($booking_dates), 'simple-hall-booking-manager'), count($booking_dates)); ?></strong>
+							echo esc_html(sprintf(_n('%d day', '%d days', absint(count($booking_dates)), 'simple-hall-booking-manager'), absint(count($booking_dates)))); ?></strong>
 						</div>
 						<?php if (!empty($booking_dates)): ?>
 							<table class="wp-list-table widefat fixed striped" style="max-width: 800px;">
@@ -174,11 +178,11 @@ if ('pending' === $booking->status) {
 											<td><?php echo esc_html($index + 1); ?></td>
 											<td><strong><?php echo esc_html(shb_format_date($date_record->booking_date)); ?></strong>
 											</td>
-											<td><?php echo esc_html(date('l', strtotime($date_record->booking_date))); ?></td>
+											<td><?php echo esc_html(wp_date('l', strtotime($date_record->booking_date))); ?></td>
 											<td>
 												<?php
 												if ($date_slot) {
-													echo esc_html($date_slot->label . ' (' . date('g:i A', strtotime($date_slot->start_time)) . ' - ' . date('g:i A', strtotime($date_slot->end_time)) . ')');
+													echo esc_html($date_slot->label . ' (' . wp_date('g:i A', strtotime($date_slot->start_time)) . ' - ' . wp_date('g:i A', strtotime($date_slot->end_time)) . ')');
 												} else {
 													echo '-';
 												}
@@ -190,7 +194,8 @@ if ('pending' === $booking->status) {
 							</table>
 						<?php else: ?>
 							<p class="description">
-								<?php esc_html_e('No dates found for this booking.', 'simple-hall-booking-manager'); ?></p>
+								<?php esc_html_e('No dates found for this booking.', 'simple-hall-booking-manager'); ?>
+							</p>
 						<?php endif; ?>
 					</td>
 				</tr>
@@ -225,7 +230,7 @@ if ('pending' === $booking->status) {
 			</tr>
 			<tr>
 				<th><?php esc_html_e('Created At', 'simple-hall-booking-manager'); ?></th>
-				<td><?php echo esc_html(shb_format_date($booking->created_at) . ' ' . date('g:i A', strtotime($booking->created_at))); ?>
+				<td><?php echo esc_html(shb_format_date($booking->created_at) . ' ' . wp_date('g:i A', strtotime($booking->created_at))); ?>
 				</td>
 			</tr>
 			<tr>
@@ -262,8 +267,7 @@ if ('pending' === $booking->status) {
 			</tr>
 			<tr>
 				<th scope="row">
-					<label
-						for="admin_notes"><?php esc_html_e('Admin Notes', 'simple-hall-booking-manager'); ?></label>
+					<label for="admin_notes"><?php esc_html_e('Admin Notes', 'simple-hall-booking-manager'); ?></label>
 				</th>
 				<td>
 					<textarea name="admin_notes" id="admin_notes" rows="4"

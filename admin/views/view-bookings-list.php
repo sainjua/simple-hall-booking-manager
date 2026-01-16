@@ -97,7 +97,7 @@ $message = isset($_GET['message']) ? sanitize_text_field($_GET['message']) : '';
 						if ($cancelled_count > 0) {
 							echo ' ';
 							/* translators: %d: number of cancelled bookings */
-							printf(esc_html__('%d conflicting booking(s) were automatically cancelled.', 'simple-hall-booking-manager'), $cancelled_count);
+							printf(esc_html__('%d conflicting booking(s) were automatically cancelled.', 'simple-hall-booking-manager'), absint($cancelled_count));
 						}
 						break;
 					case 'booking_deleted':
@@ -251,12 +251,11 @@ $message = isset($_GET['message']) ? sanitize_text_field($_GET['message']) : '';
 						<td>
 							<?php echo wp_kses_post($date_display); ?>
 							<?php if ($has_conflicts): ?>
-								<br><span class="shb-conflict-badge"
-									title="<?php echo esc_attr(sprintf(
-										/* translators: %d: number of conflicts */
-										_n('%d conflict', '%d conflicts', $conflict_count, 'simple-hall-booking-manager'),
-										$conflict_count
-									)); ?>">⚠️</span>
+								<br><span class="shb-conflict-badge" title="<?php echo esc_attr(sprintf(
+									/* translators: %d: number of conflicts */
+									_n('%d conflict', '%d conflicts', $conflict_count, 'simple-hall-booking-manager'),
+									$conflict_count
+								)); ?>">⚠️</span>
 							<?php endif; ?>
 						</td>
 						<td><?php echo $hall ? esc_html($hall->title) : '-'; ?></td>
@@ -267,8 +266,8 @@ $message = isset($_GET['message']) ? sanitize_text_field($_GET['message']) : '';
 						</td>
 						<td>
 							<code style="font-weight: bold; letter-spacing: 1px;">
-												<?php echo esc_html($booking->pin); ?>
-											</code>
+														<?php echo esc_html($booking->pin); ?>
+													</code>
 						</td>
 						<td>
 							<span class="shb-status-badge shb-status-<?php echo esc_attr($booking->status); ?>">
@@ -278,7 +277,7 @@ $message = isset($_GET['message']) ? sanitize_text_field($_GET['message']) : '';
 								<br><small class="shb-conflict-text">
 									<?php
 									/* translators: %d: number of conflicts */
-									printf(esc_html__('⚠️ %d conflict(s)', 'simple-hall-booking-manager'), $conflict_count);
+									printf(esc_html__('⚠️ %d conflict(s)', 'simple-hall-booking-manager'), absint($conflict_count));
 									?>
 								</small>
 							<?php endif; ?>
@@ -306,7 +305,7 @@ $message = isset($_GET['message']) ? sanitize_text_field($_GET['message']) : '';
 					<span class="displaying-num">
 						<?php
 						/* translators: %s: number of items */
-						printf(_n('%s item', '%s items', $total_bookings, 'simple-hall-booking-manager'), number_format_i18n($total_bookings));
+						echo esc_html(sprintf(_n('%s item', '%s items', $total_bookings, 'simple-hall-booking-manager'), number_format_i18n($total_bookings)));
 						?>
 					</span>
 					<?php
@@ -323,6 +322,7 @@ $message = isset($_GET['message']) ? sanitize_text_field($_GET['message']) : '';
 					);
 
 					if ($page_links) {
+						// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- paginate_links() output is safe
 						echo '<span class="pagination-links">' . $page_links . '</span>';
 					}
 					?>

@@ -7,7 +7,7 @@
 
 // Exit if accessed directly
 if (!defined('ABSPATH')) {
-    exit;
+	exit;
 }
 
 $db = shb()->db;
@@ -17,16 +17,16 @@ $current_hall_id = isset($_GET['hall_id']) ? absint($_GET['hall_id']) : (!empty(
 // Get bookings for the calendar
 // Default to current month, but we can load more via AJAX or pre-load a range
 // For simplicity, let's load current month +/- 1 month
-$start_date = date('Y-m-d', strtotime('-1 month'));
-$end_date = date('Y-m-d', strtotime('+2 months'));
+$start_date = wp_date('Y-m-d', strtotime('-1 month'));
+$end_date = wp_date('Y-m-d', strtotime('+2 months'));
 
 $filters = array(
-    'date_from' => $start_date,
-    'date_to' => $end_date,
+	'date_from' => $start_date,
+	'date_to' => $end_date,
 );
 
 if ($current_hall_id) {
-    $filters['hall_id'] = $current_hall_id;
+	$filters['hall_id'] = $current_hall_id;
 }
 
 $bookings = $db->get_bookings($filters);
@@ -34,55 +34,50 @@ $bookings = $db->get_bookings($filters);
 // Format events for FullCalendar
 $events = array();
 foreach ($bookings as $booking) {
-    $booking_dates = $db->get_booking_dates($booking->id);
+	$booking_dates = $db->get_booking_dates($booking->id);
 
-    if (empty($booking_dates)) {
-        continue;
-    }
+	if (empty($booking_dates)) {
+		continue;
+	}
 
-    $color = '#3788d8'; // Default blue
-    if ('pending' === $booking->status) {
-        $color = '#fbc02d'; // Yellow
-    } elseif ('cancelled' === $booking->status) {
-        $color = '#d32f2f'; // Red
-    } elseif ('confirmed' === $booking->status) {
-        $color = '#4caf50'; // Green
-    }
+	$color = '#3788d8'; // Default blue
+	if ('pending' === $booking->status) {
+		$color = '#fbc02d'; // Yellow
+	} elseif ('cancelled' === $booking->status) {
+		$color = '#d32f2f'; // Red
+	} elseif ('confirmed' === $booking->status) {
+		$color = '#4caf50'; // Green
+	}
 
-    foreach ($booking_dates as $b_date) {
-        $slot = $db->get_slot($b_date->slot_id);
-        $slot_label = $slot ? $slot->label : 'Slot';
-        $start_time = $slot ? $slot->start_time : '00:00:00';
-        $end_time = $slot ? $slot->end_time : '23:59:59';
+	foreach ($booking_dates as $b_date) {
+		$slot = $db->get_slot($b_date->slot_id);
+		$slot_label = $slot ? $slot->label : 'Slot';
+		$start_time = $slot ? $slot->start_time : '00:00:00';
+		$end_time = $slot ? $slot->end_time : '23:59:59';
 
-        $events[] = array(
-            'title' => '#' . $booking->id . ' - ' . $booking->customer_name . ' (' . $slot_label . ')',
-            'start' => $b_date->booking_date . 'T' . $start_time,
-            'end' => $b_date->booking_date . 'T' . $end_time,
-            'url' => admin_url('admin.php?page=shb-bookings&action=edit&id=' . $booking->id),
-            'color' => $color,
-        );
-    }
+		$events[] = array(
+			'title' => '#' . $booking->id . ' - ' . $booking->customer_name . ' (' . $slot_label . ')',
+			'start' => $b_date->booking_date . 'T' . $start_time,
+			'end' => $b_date->booking_date . 'T' . $end_time,
+			'url' => admin_url('admin.php?page=shb-bookings&action=edit&id=' . $booking->id),
+			'color' => $color,
+		);
+	}
 }
 
-// Enqueue FullCalendar (CDN for simplicity in this specific user request context)
-// Note: In a production plugin, you should bundle these assets.
+// FullCalendar is enqueued via wp_enqueue_style/wp_enqueue_script in class-shb-admin.php
 ?>
-<!-- FullCalendar CSS -->
-<link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' rel='stylesheet' />
-<!-- FullCalendar JS -->
-<script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
 
 <style>
 	/* Calendar page styling */
 	.shb-calendar-wrapper {
 		background: #fff;
 		border-radius: 8px;
-		box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 		padding: 24px;
 		margin-top: 20px;
 	}
-	
+
 	.shb-calendar-header {
 		display: flex;
 		justify-content: space-between;
@@ -128,7 +123,8 @@ foreach ($bookings as $booking) {
 	}
 
 	.shb-print-btn:before {
-		content: "\f469"; /* dashicons-printer */
+		content: "\f469";
+		/* dashicons-printer */
 		font-family: dashicons;
 		font-size: 18px;
 	}
@@ -163,14 +159,14 @@ foreach ($bookings as $booking) {
 		border-radius: 4px;
 		padding: 2px 4px;
 		font-size: 0.85em;
-		box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 		cursor: pointer;
 		transition: transform 0.1s;
 	}
 
 	.fc-event:hover {
 		transform: translateY(-1px);
-		box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 	}
 
 	/* Legend */
@@ -200,8 +196,10 @@ foreach ($bookings as $booking) {
 
 	/* Print Styles */
 	@media print {
+
 		/* Global resets for print */
-		body, html {
+		body,
+		html {
 			background: white !important;
 			width: 100% !important;
 			height: auto !important;
@@ -210,11 +208,11 @@ foreach ($bookings as $booking) {
 		}
 
 		/* Hide standard WordPress admin elements */
-		#adminmenumain, 
-		#wpadminbar, 
-		#wpfooter, 
-		.update-nag, 
-		.notice, 
+		#adminmenumain,
+		#wpadminbar,
+		#wpfooter,
+		.update-nag,
+		.notice,
 		#wp-admin-bar-root-default,
 		#screen-meta,
 		#screen-meta-links,
@@ -224,7 +222,7 @@ foreach ($bookings as $booking) {
 		.shb-print-btn {
 			display: none !important;
 		}
-		
+
 		/* Reset the wrapper positioning */
 		.wrap {
 			margin: 0 !important;
@@ -267,7 +265,8 @@ foreach ($bookings as $booking) {
 		}
 
 		.fc-header-toolbar {
-			display: none !important; /* Hide calendar navigation buttons on print */
+			display: none !important;
+			/* Hide calendar navigation buttons on print */
 		}
 
 		.fc-view-harness {
@@ -290,7 +289,7 @@ foreach ($bookings as $booking) {
 			print-color-adjust: exact;
 			padding: 5px !important;
 		}
-		
+
 		.fc-event {
 			-webkit-print-color-adjust: exact;
 			print-color-adjust: exact;
@@ -300,7 +299,7 @@ foreach ($bookings as $booking) {
 		}
 
 		/* Ensure grid lines show */
-		.fc-theme-standard td, 
+		.fc-theme-standard td,
 		.fc-theme-standard th {
 			border: 1px solid #ccc !important;
 		}
@@ -308,7 +307,7 @@ foreach ($bookings as $booking) {
 </style>
 
 <div class="wrap">
-	<h1 class="wp-heading-inline"><?php esc_html_e( 'Booking Calendar', 'simple-hall-booking-manager' ); ?></h1>
+	<h1 class="wp-heading-inline"><?php esc_html_e('Booking Calendar', 'simple-hall-booking-manager'); ?></h1>
 	<hr class="wp-header-end">
 
 	<div class="shb-calendar-wrapper">
@@ -317,12 +316,13 @@ foreach ($bookings as $booking) {
 				<form method="get" action="">
 					<input type="hidden" name="page" value="shb-calendar">
 					<select name="hall_id" id="filter_hall" onchange="this.form.submit()">
-						<?php if ( empty( $halls ) ) : ?>
-							<option value=""><?php esc_html_e( 'No halls available', 'simple-hall-booking-manager' ); ?></option>
-						<?php else : ?>
-							<?php foreach ( $halls as $hall ) : ?>
-								<option value="<?php echo esc_attr( $hall->id ); ?>" <?php selected( $current_hall_id, $hall->id ); ?>>
-									<?php echo esc_html( $hall->title ); ?>
+						<?php if (empty($halls)): ?>
+							<option value=""><?php esc_html_e('No halls available', 'simple-hall-booking-manager'); ?>
+							</option>
+						<?php else: ?>
+							<?php foreach ($halls as $hall): ?>
+								<option value="<?php echo esc_attr($hall->id); ?>" <?php selected($current_hall_id, $hall->id); ?>>
+									<?php echo esc_html($hall->title); ?>
 								</option>
 							<?php endforeach; ?>
 						<?php endif; ?>
@@ -331,22 +331,22 @@ foreach ($bookings as $booking) {
 			</div>
 
 			<button class="shb-print-btn" onclick="window.print()">
-				<?php esc_html_e( 'Print Calendar', 'simple-hall-booking-manager' ); ?>
+				<?php esc_html_e('Print Calendar', 'simple-hall-booking-manager'); ?>
 			</button>
 		</div>
 
 		<div class="shb-legend">
 			<div class="shb-legend-item">
 				<span class="shb-dot" style="background-color: #fbc02d;"></span>
-				<span><?php esc_html_e( 'Pending', 'simple-hall-booking-manager' ); ?></span>
+				<span><?php esc_html_e('Pending', 'simple-hall-booking-manager'); ?></span>
 			</div>
 			<div class="shb-legend-item">
 				<span class="shb-dot" style="background-color: #4caf50;"></span>
-				<span><?php esc_html_e( 'Confirmed', 'simple-hall-booking-manager' ); ?></span>
+				<span><?php esc_html_e('Confirmed', 'simple-hall-booking-manager'); ?></span>
 			</div>
 			<div class="shb-legend-item">
 				<span class="shb-dot" style="background-color: #d32f2f;"></span>
-				<span><?php esc_html_e( 'Cancelled', 'simple-hall-booking-manager' ); ?></span>
+				<span><?php esc_html_e('Cancelled', 'simple-hall-booking-manager'); ?></span>
 			</div>
 		</div>
 
@@ -354,7 +354,7 @@ foreach ($bookings as $booking) {
 	</div>
 
 	<script>
-		document.addEventListener('DOMContentLoaded', function() {
+		document.addEventListener('DOMContentLoaded', function () {
 			var calendarEl = document.getElementById('calendar');
 			var calendar = new FullCalendar.Calendar(calendarEl, {
 				initialView: 'dayGridMonth',
@@ -370,8 +370,8 @@ foreach ($bookings as $booking) {
 					week: '<?php esc_html_e('Week', 'simple-hall-booking-manager'); ?>',
 					list: '<?php esc_html_e('List', 'simple-hall-booking-manager'); ?>'
 				},
-				events: <?php echo json_encode( $events ); ?>,
-				eventClick: function(info) {
+				events: <?php echo json_encode($events); ?>,
+				eventClick: function (info) {
 					if (info.event.url) {
 						window.location.href = info.event.url;
 						info.jsEvent.preventDefault();

@@ -247,10 +247,10 @@ class SHB_DB
 
 		// Check if booking_type column exists
 		// Check if booking_type column exists
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name must be interpolated
 		$sql = "SHOW COLUMNS FROM {$table_bookings} LIKE %s";
 		$column_exists = $this->wpdb->get_results(
-			$this->wpdb->prepare($sql, 'booking_type')
+			$this->wpdb->prepare($sql, 'booking_type') // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 		);
 
 		// Add booking_type column if it doesn't exist
@@ -282,10 +282,10 @@ class SHB_DB
 
 		// Check if pin column exists
 		// Check if pin column exists
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name must be interpolated
 		$sql = "SHOW COLUMNS FROM {$table_bookings} LIKE %s";
 		$column_exists = $this->wpdb->get_results(
-			$this->wpdb->prepare($sql, 'pin')
+			$this->wpdb->prepare($sql, 'pin') // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 		);
 
 		// Add pin column if it doesn't exist
@@ -327,13 +327,13 @@ class SHB_DB
 
 		// Check if booking_date column still exists
 		// Check if booking_date column still exists
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name must be interpolated
 		$sql = "SHOW COLUMNS FROM {$table_bookings} LIKE %s";
-		$booking_date_exists = $this->wpdb->get_results(
-			$this->wpdb->prepare($sql, 'booking_date')
+		$has_booking_date_column = $this->wpdb->get_results(
+			$this->wpdb->prepare($sql, 'booking_date') // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 		);
 
-		if (!empty($booking_date_exists)) {
+		if (!empty($has_booking_date_column)) {
 			// Migrate single-day bookings to use booking_dates table
 			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 			$single_bookings = $this->wpdb->get_results(
@@ -345,14 +345,14 @@ class SHB_DB
 
 			foreach ($single_bookings as $booking) {
 				// Check if this booking already has an entry in booking_dates
-				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name must be interpolated
 				$sql = "SELECT COUNT(*) FROM {$table_booking_dates} WHERE booking_id = %d";
-				$existing = $this->wpdb->get_var(
-					$this->wpdb->prepare($sql, $booking->id)
+				$has_dates = $this->wpdb->get_var(
+					$this->wpdb->prepare($sql, $booking->id) // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 				);
 
 				// Only insert if not already present
-				if (0 == $existing) {
+				if (0 == $has_dates) {
 					$this->wpdb->insert(
 						$table_booking_dates,
 						array(
@@ -376,13 +376,13 @@ class SHB_DB
 
 		// Check if slot_id column still exists
 		// Check if slot_id column still exists
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name must be interpolated
 		$sql = "SHOW COLUMNS FROM {$table_bookings} LIKE %s";
-		$slot_id_exists = $this->wpdb->get_results(
-			$this->wpdb->prepare($sql, 'slot_id')
+		$column_exists = $this->wpdb->get_results(
+			$this->wpdb->prepare($sql, 'slot_id') // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 		);
 
-		if (!empty($slot_id_exists)) {
+		if (!empty($column_exists)) {
 			// Drop the slot_id column and its index
 			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 			$this->wpdb->query(
@@ -491,10 +491,10 @@ class SHB_DB
 	public function get_hall($id)
 	{
 		$table = $this->get_table_halls();
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name must be interpolated
 		$sql = "SELECT * FROM {$table} WHERE id = %d";
 		return $this->wpdb->get_row(
-			$this->wpdb->prepare($sql, absint($id))
+			$this->wpdb->prepare($sql, absint($id)) // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 		);
 	}
 
@@ -592,9 +592,9 @@ class SHB_DB
 			$params[] = $exclude_id;
 		}
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+
 		$overlap = $this->wpdb->get_var(
-			$this->wpdb->prepare($sql, $params)
+			$this->wpdb->prepare($sql, $params) // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 		);
 
 		return !empty($overlap);
@@ -746,10 +746,10 @@ class SHB_DB
 	public function get_slot($id)
 	{
 		$table = $this->get_table_slots();
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name must be interpolated
 		$sql = "SELECT * FROM {$table} WHERE id = %d";
 		return $this->wpdb->get_row(
-			$this->wpdb->prepare($sql, absint($id))
+			$this->wpdb->prepare($sql, absint($id)) // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 		);
 	}
 
@@ -945,10 +945,10 @@ class SHB_DB
 	public function get_booking($id)
 	{
 		$table = $this->get_table_bookings();
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name must be interpolated
 		$sql = "SELECT * FROM {$table} WHERE id = %d";
 		return $this->wpdb->get_row(
-			$this->wpdb->prepare($sql, absint($id))
+			$this->wpdb->prepare($sql, absint($id)) // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 		);
 	}
 
@@ -961,10 +961,10 @@ class SHB_DB
 	public function get_booking_by_token($token)
 	{
 		$table = $this->get_table_bookings();
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name must be interpolated
 		$sql = "SELECT * FROM {$table} WHERE access_token = %s";
 		return $this->wpdb->get_row(
-			$this->wpdb->prepare($sql, sanitize_text_field($token))
+			$this->wpdb->prepare($sql, sanitize_text_field($token)) // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 		);
 	}
 
@@ -979,7 +979,6 @@ class SHB_DB
 		$defaults = array(
 			'hall_id' => '',
 			'slot_id' => '',
-			'status' => '',
 			'date_from' => '',
 			'date_to' => '',
 			'customer_email' => '',
@@ -1158,9 +1157,6 @@ class SHB_DB
 
 		// Insert all booking dates with their specific slots
 		foreach ($date_slots as $date => $slot_id) {
-			$date = sanitize_text_field($date);
-			$slot_id = absint($slot_id);
-
 			$date_result = $this->insert_booking_date(
 				array(
 					'booking_id' => $booking_id,
@@ -1286,11 +1282,10 @@ class SHB_DB
 	{
 		$table = $this->get_table_booking_dates();
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name must be interpolated
 		$sql = "SELECT * FROM {$table} WHERE booking_id = %d ORDER BY booking_date ASC";
-
 		$results = $this->wpdb->get_results(
-			$this->wpdb->prepare($sql, $booking_id)
+			$this->wpdb->prepare($sql, $booking_id) // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 		);
 
 		return $results ? $results : array();
@@ -1351,7 +1346,7 @@ class SHB_DB
 		// IMPORTANT: Use d.slot_id and d.booking_date (from booking_dates table)
 		// NOT b.slot_id or b.booking_date (from bookings table)
 		// because each date in a multi-day booking can have a different slot
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names must be interpolated
 		$sql = "SELECT b.id, b.hall_id, d.slot_id, d.booking_date, b.customer_name, 
 			       b.customer_email, b.customer_phone, b.event_purpose, 
 			       b.attendees_count, b.status, b.access_token, b.pin, 
@@ -1362,14 +1357,14 @@ class SHB_DB
 			AND d.booking_date = %s
 			AND b.booking_type = 'multiday'
 			AND b.status != 'cancelled'";
-
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names must be interpolated
 		$multiday_bookings = $this->wpdb->get_results(
-			$this->wpdb->prepare($sql, $hall_id, $date)
+			$this->wpdb->prepare($sql, $hall_id, $date) // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 		);
 
 		// Get single day bookings for this date
 		// Now also using booking_dates table for consistency
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names must be interpolated
 		$sql = "SELECT b.id, b.hall_id, d.slot_id, d.booking_date, b.customer_name, 
 			       b.customer_email, b.customer_phone, b.event_purpose, 
 			       b.attendees_count, b.status, b.access_token, b.pin, 
@@ -1380,9 +1375,9 @@ class SHB_DB
 			AND d.booking_date = %s
 			AND b.booking_type = 'single'
 			AND b.status != 'cancelled'";
-
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names must be interpolated
 		$single_bookings = $this->wpdb->get_results(
-			$this->wpdb->prepare($sql, $hall_id, $date)
+			$this->wpdb->prepare($sql, $hall_id, $date) // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 		);
 
 		// Merge both arrays
@@ -1562,7 +1557,7 @@ class SHB_DB
 			$sql .= $this->wpdb->prepare(' AND id != %d', $exclude_slot_id);
 		}
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name interpolated above, params prepared
 		$count = $this->wpdb->get_var($this->wpdb->prepare($sql, $hall_id));
 
 		return $count > 0;
@@ -1856,10 +1851,10 @@ class SHB_DB
 			$attempt++;
 
 			// Check if PIN already exists
-			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name must be interpolated
 			$sql = "SELECT COUNT(*) FROM {$this->get_table_bookings()} WHERE pin = %s";
 			$exists = $this->wpdb->get_var(
-				$this->wpdb->prepare($sql, $pin)
+				$this->wpdb->prepare($sql, $pin) // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 			);
 
 			if (!$exists) {
@@ -1901,11 +1896,10 @@ class SHB_DB
 	{
 		$table = $this->get_table_bookings();
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name must be interpolated
 		$sql = "SELECT * FROM {$table} WHERE pin = %s";
 		return $this->wpdb->get_row(
-			$this->wpdb->prepare($sql, strtoupper(sanitize_text_field($pin)))
+			$this->wpdb->prepare($sql, strtoupper(sanitize_text_field($pin))) // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 		);
 	}
 }
-

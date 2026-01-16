@@ -240,7 +240,7 @@ if (isset($_POST['shb_save_settings'])) {
 							array(
 								'name' => 'confirmation_page',
 								'id' => 'confirmation_page',
-								'selected' => $confirmation_page,
+								'selected' => absint($confirmation_page),
 								'show_option_none' => esc_html__('— Select Page —', 'simple-hall-booking-manager'),
 								'option_none_value' => '',
 							)

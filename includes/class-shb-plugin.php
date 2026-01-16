@@ -6,14 +6,15 @@
  */
 
 // Exit if accessed directly
-if ( ! defined( 'ABSPATH' ) ) {
+if (!defined('ABSPATH')) {
 	exit;
 }
 
 /**
  * Main plugin class - Singleton
  */
-class SHB_Plugin {
+class SHB_Plugin
+{
 
 	/**
 	 * Single instance of the class
@@ -69,8 +70,9 @@ class SHB_Plugin {
 	 *
 	 * @return SHB_Plugin
 	 */
-	public static function get_instance() {
-		if ( null === self::$instance ) {
+	public static function get_instance()
+	{
+		if (null === self::$instance) {
 			self::$instance = new self();
 		}
 		return self::$instance;
@@ -79,7 +81,8 @@ class SHB_Plugin {
 	/**
 	 * Constructor
 	 */
-	private function __construct() {
+	private function __construct()
+	{
 		$this->load_dependencies();
 		$this->init_hooks();
 		$this->init_components();
@@ -88,7 +91,8 @@ class SHB_Plugin {
 	/**
 	 * Load required files
 	 */
-	private function load_dependencies() {
+	private function load_dependencies()
+	{
 		// Core classes
 		require_once SHB_PLUGIN_DIR . 'includes/class-shb-db.php';
 		require_once SHB_PLUGIN_DIR . 'includes/class-shb-admin.php';
@@ -102,25 +106,26 @@ class SHB_Plugin {
 	/**
 	 * Initialize WordPress hooks
 	 */
-	private function init_hooks() {
-		add_action( 'plugins_loaded', array( $this, 'load_textdomain' ) );
-		add_action( 'init', array( $this, 'init' ) );
+	private function init_hooks()
+	{
+		add_action('init', array($this, 'init'));
 	}
 
 	/**
 	 * Initialize components
 	 */
-	private function init_components() {
+	private function init_components()
+	{
 		// Database layer
 		$this->db = new SHB_DB();
 
 		// Admin area
-		if ( is_admin() ) {
+		if (is_admin()) {
 			$this->admin = new SHB_Admin();
 		}
 
 		// Frontend
-		if ( ! is_admin() ) {
+		if (!is_admin()) {
 			$this->frontend = new SHB_Frontend();
 		}
 
@@ -136,21 +141,20 @@ class SHB_Plugin {
 
 	/**
 	 * Load plugin textdomain
+	 *
+	 * Note: Since WordPress 4.6, translations are automatically loaded for plugins
+	 * hosted on WordPress.org. This method is kept for documentation purposes only.
+	 * WordPress will automatically load translations from the /languages directory
+	 * when needed.
 	 */
-	public function load_textdomain() {
-		load_plugin_textdomain(
-			'simple-hall-booking-manager',
-			false,
-			dirname( SHB_PLUGIN_BASENAME ) . '/languages'
-		);
-	}
 
 	/**
 	 * Init hook callback
 	 */
-	public function init() {
+	public function init()
+	{
 		// Register any custom post types, taxonomies, etc. if needed in the future
-		do_action( 'shb_init' );
+		do_action('shb_init');
 	}
 }
 

@@ -87,7 +87,7 @@ if (!defined('ABSPATH')) {
                         $checked = in_array((string) $day_num, (array) $days_enabled) ? 'checked' : '';
                         ?>
                         <label>
-                            <input type="checkbox" name="days_enabled[]" value="<?php echo esc_attr($day_num); ?>" <?php echo $checked; ?>>
+                            <input type="checkbox" name="days_enabled[]" value="<?php echo esc_attr($day_num); ?>" <?php echo esc_attr($checked); ?>>
                             <?php echo esc_html($day_name); ?>
                         </label><br>
                     <?php endforeach; ?>
@@ -109,12 +109,15 @@ if (!defined('ABSPATH')) {
         <p class="submit">
             <input type="submit" name="shb_save_slot" class="button button-primary"
                 value="<?php esc_attr_e('Save Slot', 'simple-hall-booking-manager'); ?>">
-            <button type="button" class="button shb-check-slot-overlap"><?php esc_html_e('Check Overlap', 'simple-hall-booking-manager'); ?></button>
+            <button type="button"
+                class="button shb-check-slot-overlap"><?php esc_html_e('Check Overlap', 'simple-hall-booking-manager'); ?></button>
             <button type="button" class="button shb-cancel-slot">
                 <?php esc_html_e('Cancel', 'simple-hall-booking-manager'); ?>
             </button>
-            <span class="shb-overlap-check-spinner spinner" style="float: none; margin: 0 5px; vertical-align: middle;"></span>
+            <span class="shb-overlap-check-spinner spinner"
+                style="float: none; margin: 0 5px; vertical-align: middle;"></span>
         </p>
-        <div class="shb-overlap-check-result" style="margin-top: 10px; display: none; padding: 10px; border-radius: 3px;"></div>
+        <div class="shb-overlap-check-result"
+            style="margin-top: 10px; display: none; padding: 10px; border-radius: 3px;"></div>
     </form>
 </div>

@@ -127,6 +127,26 @@ class SHB_Admin
 				),
 			)
 		);
+
+		// Enqueue FullCalendar for calendar page only
+		if ('toplevel_page_shb-calendar' === $hook) {
+			// FullCalendar CSS (bundled locally)
+			wp_enqueue_style(
+				'fullcalendar',
+				SHB_PLUGIN_URL . 'admin/vendor/fullcalendar/main.min.css',
+				array(),
+				'5.11.3'
+			);
+
+			// FullCalendar JS (bundled locally)
+			wp_enqueue_script(
+				'fullcalendar',
+				SHB_PLUGIN_URL . 'admin/vendor/fullcalendar/main.min.js',
+				array(),
+				'5.11.3',
+				true
+			);
+		}
 	}
 
 	/**
@@ -259,6 +279,7 @@ class SHB_Admin
 
 		// Handle hall actions
 		if (isset($_POST['shb_save_hall'])) {
+			// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified in handle_save_hall method
 			$this->handle_save_hall();
 		}
 
@@ -268,6 +289,7 @@ class SHB_Admin
 
 		// Handle slot actions
 		if (isset($_POST['shb_save_slot'])) {
+			// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified in handle_save_slot method
 			$this->handle_save_slot();
 		}
 
@@ -277,6 +299,7 @@ class SHB_Admin
 
 		// Handle booking actions
 		if (isset($_POST['shb_save_booking'])) {
+			// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified in handle_save_booking method
 			$this->handle_save_booking();
 		}
 

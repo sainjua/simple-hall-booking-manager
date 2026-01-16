@@ -486,7 +486,7 @@ class SHB_AJAX
 							'message' => sprintf(
 								/* translators: %s: date */
 								__('Selected time slot for %s does not exist. Please refresh and try again.', 'simple-hall-booking-manager'),
-								date('F j, Y', strtotime($date))
+								wp_date('F j, Y', strtotime($date))
 							),
 						)
 					);
@@ -506,7 +506,7 @@ class SHB_AJAX
 							'message' => sprintf(
 								/* translators: %s: date */
 								__('Selected time slot for %s is currently inactive. Please choose another slot.', 'simple-hall-booking-manager'),
-								date('F j, Y', strtotime($date))
+								wp_date('F j, Y', strtotime($date))
 							),
 						)
 					);
