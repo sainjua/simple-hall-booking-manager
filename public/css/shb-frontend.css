@@ -120,6 +120,7 @@
 	border-radius: 4px;
 	font-size: 16px;
 	transition: border-color 0.3s;
+	box-sizing: border-box;
 }
 
 .shb-form-group input:focus,
@@ -187,19 +188,19 @@
 	box-shadow: 0 2px 8px rgba(40, 167, 69, 0.2);
 }
 
-.shb-slot-option input[type="radio"]:checked + label {
+.shb-slot-option input[type="radio"]:checked+label {
 	background: #667eea;
 	color: #fff;
 	border-color: #667eea;
 	border-left-width: 4px;
 }
 
-.shb-slot-option input[type="radio"]:checked + label .shb-availability-indicator {
+.shb-slot-option input[type="radio"]:checked+label .shb-availability-indicator {
 	background: #fff;
 	border-color: #fff;
 }
 
-.shb-slot-option input[type="radio"]:checked + label .shb-slot-status {
+.shb-slot-option input[type="radio"]:checked+label .shb-slot-status {
 	color: #fff;
 }
 
@@ -245,7 +246,6 @@
 
 /* Slot status badge */
 .shb-slot-status {
-	display: inline-block;
 	padding: 2px 8px;
 	border-radius: 12px;
 	font-size: 11px;
@@ -298,6 +298,7 @@
 	text-decoration: none;
 	cursor: pointer;
 	transition: all 0.3s;
+	box-sizing: border-box;
 }
 
 .shb-btn-primary {
@@ -443,6 +444,7 @@
 
 /* Responsive */
 @media screen and (max-width: 768px) {
+
 	.shb-hall-list.shb-columns-3,
 	.shb-hall-list.shb-columns-4 {
 		grid-template-columns: 1fr;
@@ -743,7 +745,7 @@
 	border-radius: 6px;
 	padding: 20px;
 	margin-top: 20px;
-	box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .shb-dates-label {
@@ -780,7 +782,7 @@
 }
 
 .shb-date-slot-row:hover {
-	box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .shb-date-label {
@@ -1008,56 +1010,56 @@
 	.shb-calendar-grid {
 		gap: 3px;
 	}
-	
+
 	.shb-cal-day {
 		padding: 8px 5px;
 		font-size: 12px;
 	}
-	
+
 	.shb-cal-day-header {
 		padding: 6px 3px;
 		font-size: 11px;
 	}
-	
+
 	.shb-date-number {
 		font-size: 12px;
 	}
-	
+
 	.shb-date-indicator {
 		width: 5px;
 		height: 5px;
 	}
-	
+
 	.shb-calendar-legend {
 		flex-wrap: wrap;
 		gap: 12px;
 		padding: 10px;
 		font-size: 11px;
 	}
-	
+
 	.shb-legend-item {
 		gap: 5px;
 	}
-	
+
 	.shb-legend-indicator {
 		width: 10px;
 		height: 10px;
 	}
-	
+
 	.shb-legend-label {
 		font-size: 11px;
 	}
-	
+
 	.shb-calendar,
 	.shb-multiday-calendar {
 		padding: 10px;
 	}
-	
+
 	/* Hide header on mobile */
 	.shb-dates-header {
 		display: none;
 	}
-	
+
 	/* Stack date selection rows on mobile */
 	.shb-date-slot-row {
 		grid-template-columns: 1fr;
@@ -1066,26 +1068,26 @@
 		position: relative;
 		padding-right: 50px;
 	}
-	
+
 	.shb-date-label {
 		justify-content: flex-start;
 		width: 100%;
 	}
-	
+
 	.shb-date-slot-selector {
 		width: 100%;
 	}
-	
+
 	.shb-remove-date {
 		position: absolute;
 		top: 12px;
 		right: 12px;
 	}
-	
+
 	.shb-single-date-selection .shb-date-info {
 		grid-template-columns: 1fr auto;
 	}
-	
+
 	.shb-single-date-selection .shb-date-info strong {
 		font-size: 14px;
 	}
@@ -1095,21 +1097,21 @@
 	.shb-date-label {
 		font-size: 13px;
 	}
-	
+
 	.shb-slot-select {
 		font-size: 13px;
 		padding: 8px 10px;
 	}
-	
+
 	.shb-slot-options {
 		grid-template-columns: 1fr;
 	}
-	
+
 	.shb-slot-status {
 		font-size: 10px;
 		padding: 2px 6px;
 	}
-	
+
 	.shb-select-required {
 		font-size: 13px;
 		padding: 8px 12px;
@@ -1186,7 +1188,7 @@
 	.shb-user-booking-dates-table {
 		font-size: 14px;
 	}
-	
+
 	.shb-user-booking-dates-table th,
 	.shb-user-booking-dates-table td {
 		padding: 8px;
@@ -1311,10 +1313,349 @@
 		margin: 20px;
 		padding: 20px;
 	}
-	
+
 	.shb-pin-input {
 		font-size: 18px;
 		padding: 12px;
 	}
 }
 
+/* ========================================
+   Enhanced User Booking UI (v2.0)
+   ======================================== */
+
+.shb-user-booking {
+	max-width: 800px;
+	margin: 40px auto;
+	padding: 0;
+	background: #fff;
+	border-radius: 12px;
+	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+	overflow: hidden;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+}
+
+.shb-booking-header {
+	padding: 30px 30px 20px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	border-bottom: 1px solid #f0f0f0;
+}
+
+.shb-user-booking h2 {
+	margin: 0;
+	font-size: 24px;
+	color: #1a1a1a;
+	font-weight: 700;
+}
+
+.shb-booking-id {
+	background: #f0f2f5;
+	padding: 6px 12px;
+	border-radius: 20px;
+	font-size: 13px;
+	color: #666;
+	font-weight: 600;
+	letter-spacing: 0.5px;
+}
+
+/* Status Banner */
+.shb-status-banner {
+	padding: 20px 30px;
+	display: flex;
+	align-items: center;
+	gap: 15px;
+}
+
+.shb-status-banner.shb-status-confirmed {
+	background: linear-gradient(to right, #e8f5e9, #fff);
+	border-left: 5px solid #2e7d32;
+}
+
+.shb-status-banner.shb-status-pending {
+	background: linear-gradient(to right, #fff8e1, #fff);
+	border-left: 5px solid #ffa000;
+}
+
+.shb-status-banner.shb-status-cancelled {
+	background: linear-gradient(to right, #ffebee, #fff);
+	border-left: 5px solid #c62828;
+}
+
+.shb-status-icon {
+	font-size: 24px;
+}
+
+.shb-status-text strong {
+	display: block;
+	font-size: 16px;
+	color: #333;
+	margin-bottom: 2px;
+}
+
+.shb-status-text small {
+	color: #666;
+	font-size: 13px;
+}
+
+/* PIN Card */
+.shb-pin-card-container {
+	padding: 30px;
+	background: #fafafa;
+	text-align: center;
+	border-bottom: 1px dashed #e0e0e0;
+}
+
+.shb-pin-card {
+	background: #fff;
+	display: inline-block;
+	padding: 20px 40px;
+	border-radius: 8px;
+	border: 2px solid #e0e0e0;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+}
+
+.shb-pin-label {
+	text-transform: uppercase;
+	font-size: 11px;
+	letter-spacing: 1px;
+	color: #888;
+	margin-bottom: 8px;
+	font-weight: 600;
+}
+
+.shb-pin-code {
+	font-family: "Courier New", monospace;
+	font-size: 32px;
+	font-weight: 700;
+	letter-spacing: 4px;
+	color: #2271b1;
+	margin-bottom: 8px;
+}
+
+.shb-pin-help {
+	font-size: 12px;
+	color: #999;
+}
+
+/* Content Grid */
+.shb-booking-content-grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 30px;
+	padding: 30px;
+	border-bottom: 1px solid #f0f0f0;
+}
+
+.shb-info-card h3,
+.shb-schedule-card h3 {
+	font-size: 16px;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	color: #888;
+	margin: 0 0 20px 0;
+	font-weight: 600;
+}
+
+.shb-info-list {
+	display: flex;
+	flex-direction: column;
+	gap: 15px;
+}
+
+.shb-info-item {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.shb-label {
+	font-size: 12px;
+	color: #999;
+}
+
+.shb-value {
+	font-size: 15px;
+	color: #333;
+	font-weight: 500;
+}
+
+/* Schedule Card */
+.shb-schedule-card {
+	padding: 30px;
+	background: #fff;
+}
+
+.shb-schedule-summary {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin-bottom: 20px;
+	font-size: 14px;
+	color: #666;
+}
+
+.shb-badge {
+	padding: 4px 8px;
+	border-radius: 4px;
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+}
+
+.shb-badge-info {
+	background: #e3f2fd;
+	color: #1565c0;
+}
+
+/* Responsive Table */
+.shb-table-responsive {
+	overflow-x: auto;
+	border: 1px solid #eee;
+	border-radius: 8px;
+}
+
+.shb-schedule-table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 14px;
+}
+
+.shb-schedule-table th {
+	background: #f8f9fa;
+	padding: 12px 15px;
+	text-align: left;
+	font-weight: 600;
+	color: #555;
+	border-bottom: 1px solid #eee;
+}
+
+.shb-schedule-table td {
+	padding: 12px 15px;
+	border-bottom: 1px solid #eee;
+	vertical-align: middle;
+}
+
+.shb-schedule-table tr:last-child td {
+	border-bottom: none;
+}
+
+.shb-time-badge {
+	display: inline-block;
+	background: #f0f2f5;
+	padding: 2px 8px;
+	border-radius: 12px;
+	font-size: 12px;
+	color: #555;
+}
+
+.shb-slot-name {
+	display: block;
+	margin-top: 4px;
+	color: #888;
+}
+
+/* Single Date Display */
+.shb-single-date-display {
+	display: flex;
+	align-items: center;
+	gap: 30px;
+	padding: 20px;
+	background: #f8f9fa;
+	border-radius: 8px;
+	border: 1px solid #eee;
+}
+
+.shb-big-date {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	background: #fff;
+	padding: 15px;
+	border-radius: 8px;
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+	min-width: 80px;
+}
+
+.shb-day {
+	font-size: 32px;
+	font-weight: 700;
+	color: #2271b1;
+	line-height: 1;
+}
+
+.shb-month-year {
+	font-size: 12px;
+	color: #666;
+	text-transform: uppercase;
+	margin-top: 4px;
+	font-weight: 500;
+}
+
+.shb-time-info {
+	flex: 1;
+}
+
+.shb-time-row {
+	font-size: 18px;
+	color: #333;
+	margin-bottom: 5px;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.shb-icon {
+	font-size: 20px;
+}
+
+.shb-slot-label-row {
+	font-size: 14px;
+	color: #666;
+}
+
+/* Footer & Actions */
+.shb-booked-on {
+	padding: 15px 30px;
+	background: #f9f9f9;
+	font-size: 12px;
+	color: #888;
+	text-align: right;
+	border-top: 1px solid #eee;
+}
+
+.shb-booking-actions {
+	padding: 20px 30px;
+	background: #fff;
+	border-top: 1px solid #eee;
+	text-align: right;
+}
+
+.shb-btn-block {
+	display: block;
+	width: 100%;
+}
+
+@media screen and (max-width: 600px) {
+	.shb-booking-content-grid {
+		grid-template-columns: 1fr;
+		gap: 20px;
+	}
+
+	.shb-single-date-display {
+		flex-direction: column;
+		text-align: center;
+		gap: 15px;
+	}
+
+	.shb-pin-code {
+		font-size: 24px;
+	}
+
+	.shb-booking-header {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 10px;
+	}
+}

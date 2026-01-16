@@ -6,7 +6,7 @@
  */
 
 // Exit if accessed directly
-if ( ! defined( 'ABSPATH' ) ) {
+if (!defined('ABSPATH')) {
 	exit;
 }
 
@@ -15,7 +15,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @return SHB_Plugin
  */
-function shb() {
+function shb()
+{
 	return SHB_Plugin::get_instance();
 }
 
@@ -25,8 +26,9 @@ function shb() {
  * @param int $length Token length.
  * @return string
  */
-function shb_generate_token( $length = 32 ) {
-	return bin2hex( random_bytes( $length ) );
+function shb_generate_token($length = 32)
+{
+	return bin2hex(random_bytes($length));
 }
 
 /**
@@ -36,11 +38,12 @@ function shb_generate_token( $length = 32 ) {
  * @param string $format Date format.
  * @return string
  */
-function shb_format_date( $date, $format = null ) {
-	if ( null === $format ) {
-		$format = get_option( 'date_format' );
+function shb_format_date($date, $format = null)
+{
+	if (null === $format) {
+		$format = get_option('date_format');
 	}
-	return date_i18n( $format, strtotime( $date ) );
+	return date_i18n($format, strtotime($date));
 }
 
 /**
@@ -50,11 +53,12 @@ function shb_format_date( $date, $format = null ) {
  * @param string $format Time format.
  * @return string
  */
-function shb_format_time( $time, $format = null ) {
-	if ( null === $format ) {
-		$format = get_option( 'time_format' );
+function shb_format_time($time, $format = null)
+{
+	if (null === $format) {
+		$format = get_option('time_format');
 	}
-	return date_i18n( $format, strtotime( $time ) );
+	return date_i18n($format, strtotime($time));
 }
 
 /**
@@ -63,14 +67,15 @@ function shb_format_time( $time, $format = null ) {
  * @param string $status Booking status.
  * @return string
  */
-function shb_get_status_label( $status ) {
+function shb_get_status_label($status)
+{
 	$statuses = array(
-		'pending'   => __( 'Pending', 'simple-hall-booking-manager' ),
-		'confirmed' => __( 'Confirmed', 'simple-hall-booking-manager' ),
-		'cancelled' => __( 'Cancelled', 'simple-hall-booking-manager' ),
+		'pending' => __('Pending', 'simple-hall-booking-manager'),
+		'confirmed' => __('Confirmed', 'simple-hall-booking-manager'),
+		'cancelled' => __('Cancelled', 'simple-hall-booking-manager'),
 	);
 
-	return isset( $statuses[ $status ] ) ? $statuses[ $status ] : $status;
+	return isset($statuses[$status]) ? $statuses[$status] : $status;
 }
 
 /**
@@ -78,11 +83,12 @@ function shb_get_status_label( $status ) {
  *
  * @return array
  */
-function shb_get_booking_statuses() {
+function shb_get_booking_statuses()
+{
 	return array(
-		'pending'   => __( 'Pending', 'simple-hall-booking-manager' ),
-		'confirmed' => __( 'Confirmed', 'simple-hall-booking-manager' ),
-		'cancelled' => __( 'Cancelled', 'simple-hall-booking-manager' ),
+		'pending' => __('Pending', 'simple-hall-booking-manager'),
+		'confirmed' => __('Confirmed', 'simple-hall-booking-manager'),
+		'cancelled' => __('Cancelled', 'simple-hall-booking-manager'),
 	);
 }
 
@@ -92,13 +98,14 @@ function shb_get_booking_statuses() {
  * @param string $type Slot type.
  * @return string
  */
-function shb_get_slot_type_label( $type ) {
+function shb_get_slot_type_label($type)
+{
 	$types = array(
-		'full_day' => __( 'Full Day', 'simple-hall-booking-manager' ),
-		'partial'  => __( 'Partial', 'simple-hall-booking-manager' ),
+		'full_day' => __('Full Day', 'simple-hall-booking-manager'),
+		'partial' => __('Partial', 'simple-hall-booking-manager'),
 	);
 
-	return isset( $types[ $type ] ) ? $types[ $type ] : $type;
+	return isset($types[$type]) ? $types[$type] : $type;
 }
 
 /**
@@ -107,8 +114,9 @@ function shb_get_slot_type_label( $type ) {
  * @param string $label Slot label.
  * @return string
  */
-function shb_sanitize_slot_label( $label ) {
-	return sanitize_text_field( $label );
+function shb_sanitize_slot_label($label)
+{
+	return sanitize_text_field($label);
 }
 
 /**
@@ -117,8 +125,9 @@ function shb_sanitize_slot_label( $label ) {
  * @param string $email Email address.
  * @return bool
  */
-function shb_is_valid_email( $email ) {
-	return is_email( $email );
+function shb_is_valid_email($email)
+{
+	return is_email($email);
 }
 
 /**
@@ -127,9 +136,10 @@ function shb_is_valid_email( $email ) {
  * @param string $phone Phone number.
  * @return bool
  */
-function shb_is_valid_phone( $phone ) {
+function shb_is_valid_phone($phone)
+{
 	// Basic validation - you can make this more sophisticated
-	return preg_match( '/^[0-9\s\+\-\(\)]+$/', $phone );
+	return preg_match('/^[0-9\s\+\-\(\)]+$/', $phone);
 }
 
 /**
@@ -139,42 +149,52 @@ function shb_is_valid_phone( $phone ) {
  * @param int    $page_id Page ID containing the [shb_user_bookings] shortcode.
  * @return string
  */
-function shb_get_booking_access_url( $token, $page_id = null ) {
-	if ( null === $page_id ) {
+function shb_get_booking_access_url($token, $page_id = null)
+{
+	if (null === $page_id) {
 		// Try to find a page with the shortcode
 		$pages = get_posts(
 			array(
-				'post_type'   => 'page',
+				'post_type' => 'page',
 				'post_status' => 'publish',
-				's'           => '[shb_user_bookings]',
+				's' => '[shb_user_bookings]',
 				'numberposts' => 1,
 			)
 		);
 
-		if ( ! empty( $pages ) ) {
+		if (!empty($pages)) {
 			$page_id = $pages[0]->ID;
 		}
 	}
 
-	if ( $page_id ) {
-		return add_query_arg( 'token', $token, get_permalink( $page_id ) );
+	if ($page_id) {
+		return add_query_arg('token', $token, get_permalink($page_id));
 	}
 
-	return home_url( '?token=' . $token );
+	return home_url('?token=' . $token);
+}
+
+
+
+/**
+ * Get a single slot
+ *
+ * @param int $id Slot ID.
+ * @return object|null
+ */
+function shb_get_slot($id)
+{
+	return shb()->db->get_slot($id);
 }
 
 /**
- * Debug log helper
+ * Get a single hall
  *
- * @param mixed $message Message to log.
+ * @param int $id Hall ID.
+ * @return object|null
  */
-function shb_log( $message ) {
-	if ( defined( 'WP_DEBUG' ) && WP_DEBUG && defined( 'WP_DEBUG_LOG' ) && WP_DEBUG_LOG ) {
-		if ( is_array( $message ) || is_object( $message ) ) {
-			error_log( 'SHB: ' . print_r( $message, true ) );
-		} else {
-			error_log( 'SHB: ' . $message );
-		}
-	}
+function shb_get_hall($id)
+{
+	return shb()->db->get_hall($id);
 }
 

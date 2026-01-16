@@ -246,15 +246,16 @@ class SHB_DB
 		$table_bookings = $this->get_table_bookings();
 
 		// Check if booking_type column exists
+		// Check if booking_type column exists
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$sql = "SHOW COLUMNS FROM {$table_bookings} LIKE %s";
 		$column_exists = $this->wpdb->get_results(
-			$this->wpdb->prepare(
-				"SHOW COLUMNS FROM {$table_bookings} LIKE %s",
-				'booking_type'
-			)
+			$this->wpdb->prepare($sql, 'booking_type')
 		);
 
 		// Add booking_type column if it doesn't exist
 		if (empty($column_exists)) {
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 			$this->wpdb->query(
 				"ALTER TABLE {$table_bookings} 
 				ADD COLUMN booking_type enum('single','multiday') NOT NULL DEFAULT 'single' 
@@ -262,6 +263,7 @@ class SHB_DB
 			);
 
 			// Make booking_date nullable for multiday bookings
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 			$this->wpdb->query(
 				"ALTER TABLE {$table_bookings} 
 				MODIFY COLUMN booking_date date DEFAULT NULL 
@@ -279,15 +281,16 @@ class SHB_DB
 		$table_bookings = $this->get_table_bookings();
 
 		// Check if pin column exists
+		// Check if pin column exists
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$sql = "SHOW COLUMNS FROM {$table_bookings} LIKE %s";
 		$column_exists = $this->wpdb->get_results(
-			$this->wpdb->prepare(
-				"SHOW COLUMNS FROM {$table_bookings} LIKE %s",
-				'pin'
-			)
+			$this->wpdb->prepare($sql, 'pin')
 		);
 
 		// Add pin column if it doesn't exist
 		if (empty($column_exists)) {
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 			$this->wpdb->query(
 				"ALTER TABLE {$table_bookings} 
 				ADD COLUMN pin varchar(6) NOT NULL DEFAULT '' COMMENT 'Format: AA1111 (2 letters + 4 digits)' 
@@ -296,9 +299,8 @@ class SHB_DB
 			);
 
 			// Generate PINs for existing bookings
-			$bookings = $this->wpdb->get_results(
-				"SELECT id FROM {$table_bookings} WHERE pin = ''"
-			);
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			$bookings = $this->wpdb->get_results("SELECT id FROM {$table_bookings} WHERE pin = ''");
 
 			foreach ($bookings as $booking) {
 				$pin = $this->generate_unique_pin();
@@ -324,15 +326,16 @@ class SHB_DB
 		$table_booking_dates = $this->get_table_booking_dates();
 
 		// Check if booking_date column still exists
+		// Check if booking_date column still exists
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$sql = "SHOW COLUMNS FROM {$table_bookings} LIKE %s";
 		$booking_date_exists = $this->wpdb->get_results(
-			$this->wpdb->prepare(
-				"SHOW COLUMNS FROM {$table_bookings} LIKE %s",
-				'booking_date'
-			)
+			$this->wpdb->prepare($sql, 'booking_date')
 		);
 
 		if (!empty($booking_date_exists)) {
 			// Migrate single-day bookings to use booking_dates table
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 			$single_bookings = $this->wpdb->get_results(
 				"SELECT id, booking_date, slot_id 
 				FROM {$table_bookings} 
@@ -342,11 +345,10 @@ class SHB_DB
 
 			foreach ($single_bookings as $booking) {
 				// Check if this booking already has an entry in booking_dates
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				$sql = "SELECT COUNT(*) FROM {$table_booking_dates} WHERE booking_id = %d";
 				$existing = $this->wpdb->get_var(
-					$this->wpdb->prepare(
-						"SELECT COUNT(*) FROM {$table_booking_dates} WHERE booking_id = %d",
-						$booking->id
-					)
+					$this->wpdb->prepare($sql, $booking->id)
 				);
 
 				// Only insert if not already present
@@ -364,6 +366,7 @@ class SHB_DB
 			}
 
 			// Drop the booking_date column and its index
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 			$this->wpdb->query(
 				"ALTER TABLE {$table_bookings} 
 				DROP INDEX booking_date,
@@ -372,15 +375,16 @@ class SHB_DB
 		}
 
 		// Check if slot_id column still exists
+		// Check if slot_id column still exists
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$sql = "SHOW COLUMNS FROM {$table_bookings} LIKE %s";
 		$slot_id_exists = $this->wpdb->get_results(
-			$this->wpdb->prepare(
-				"SHOW COLUMNS FROM {$table_bookings} LIKE %s",
-				'slot_id'
-			)
+			$this->wpdb->prepare($sql, 'slot_id')
 		);
 
 		if (!empty($slot_id_exists)) {
 			// Drop the slot_id column and its index
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 			$this->wpdb->query(
 				"ALTER TABLE {$table_bookings} 
 				DROP INDEX slot_id,
@@ -487,8 +491,10 @@ class SHB_DB
 	public function get_hall($id)
 	{
 		$table = $this->get_table_halls();
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$sql = "SELECT * FROM {$table} WHERE id = %d";
 		return $this->wpdb->get_row(
-			$this->wpdb->prepare("SELECT * FROM {$table} WHERE id = %d", absint($id))
+			$this->wpdb->prepare($sql, absint($id))
 		);
 	}
 
@@ -524,8 +530,10 @@ class SHB_DB
 			$limit_sql = $this->wpdb->prepare('LIMIT %d OFFSET %d', absint($args['limit']), absint($args['offset']));
 		}
 
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared
 		$sql = "SELECT * FROM {$table} WHERE {$where_sql} ORDER BY {$order_by} {$limit_sql}";
 
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		return $this->wpdb->get_results($sql);
 	}
 
@@ -559,6 +567,40 @@ class SHB_DB
 	// ============================================================
 
 	/**
+	 * Check for slot time overlap within a hall.
+	 * 
+	 * @param int    $hall_id    ID of the hall.
+	 * @param string $start_time Start time (H:i:s).
+	 * @param string $end_time   End time (H:i:s).
+	 * @param int    $exclude_id Optional. Slot ID to exclude (for edit validation).
+	 * @return bool True if overlap exists, false otherwise.
+	 */
+	public function check_slot_overlap($hall_id, $start_time, $end_time, $exclude_id = 0)
+	{
+		$table = $this->get_table_slots();
+		$sql = "SELECT id FROM {$table} 
+				WHERE hall_id = %d 
+				AND slot_type = 'partial' 
+				AND (
+					(start_time < %s AND end_time > %s)
+				)";
+
+		$params = array($hall_id, $end_time, $start_time);
+
+		if ($exclude_id > 0) {
+			$sql .= " AND id != %d";
+			$params[] = $exclude_id;
+		}
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$overlap = $this->wpdb->get_var(
+			$this->wpdb->prepare($sql, $params)
+		);
+
+		return !empty($overlap);
+	}
+
+	/**
 	 * Insert a new slot
 	 *
 	 * @param array $data Slot data.
@@ -578,6 +620,13 @@ class SHB_DB
 		);
 
 		$data = wp_parse_args($data, $defaults);
+
+		// Check for overlap if partial
+		if ('partial' === $data['slot_type']) {
+			if ($this->check_slot_overlap($data['hall_id'], $data['start_time'], $data['end_time'])) {
+				return false; // Time overlap
+			}
+		}
 
 		// Ensure days_enabled is JSON
 		if (is_array($data['days_enabled'])) {
@@ -611,6 +660,32 @@ class SHB_DB
 	 */
 	public function update_slot($id, $data)
 	{
+		// Get existing slot to find hall_id and current values
+		$existing_slot = $this->get_slot($id);
+		if (!$existing_slot) {
+			return false;
+		}
+
+		$hall_id = $existing_slot->hall_id;
+		$slot_type = $existing_slot->slot_type; // Type usually doesn't change via this form, but good to know
+
+		// If valid start/end time provided, use them; otherwise use existing
+		$start_time = isset($data['start_time']) ? $data['start_time'] : $existing_slot->start_time;
+		$end_time = isset($data['end_time']) ? $data['end_time'] : $existing_slot->end_time;
+
+		// Check for overlap if partial (and verify slot type is actually partial)
+		// Note: The form might allow changing slot_type, but typically we edit existing type. 
+		// If data has slot_type, use it.
+		if (isset($data['slot_type'])) {
+			$slot_type = $data['slot_type'];
+		}
+
+		if ('partial' === $slot_type) {
+			if ($this->check_slot_overlap($hall_id, $start_time, $end_time, $id)) {
+				return false; // Time overlap
+			}
+		}
+
 		$update_data = array();
 		$format = array();
 
@@ -671,8 +746,10 @@ class SHB_DB
 	public function get_slot($id)
 	{
 		$table = $this->get_table_slots();
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$sql = "SELECT * FROM {$table} WHERE id = %d";
 		return $this->wpdb->get_row(
-			$this->wpdb->prepare("SELECT * FROM {$table} WHERE id = %d", absint($id))
+			$this->wpdb->prepare($sql, absint($id))
 		);
 	}
 
@@ -683,7 +760,7 @@ class SHB_DB
 	 * @param array $args Additional arguments.
 	 * @return array
 	 */
-	public function get_slots_by_hall($hall_id, $args = array())
+	public function get_slots_by_hall($hall_id, $args = array(), $current_slot = NULL)
 	{
 		$defaults = array(
 			'is_active' => '',
@@ -703,8 +780,10 @@ class SHB_DB
 		}
 
 		$where_sql = implode(' AND ', $where);
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared
 		$sql = "SELECT * FROM {$table} WHERE {$where_sql} ORDER BY sort_order ASC, start_time ASC";
 
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		return $this->wpdb->get_results($sql);
 	}
 
@@ -866,8 +945,10 @@ class SHB_DB
 	public function get_booking($id)
 	{
 		$table = $this->get_table_bookings();
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$sql = "SELECT * FROM {$table} WHERE id = %d";
 		return $this->wpdb->get_row(
-			$this->wpdb->prepare("SELECT * FROM {$table} WHERE id = %d", absint($id))
+			$this->wpdb->prepare($sql, absint($id))
 		);
 	}
 
@@ -880,8 +961,10 @@ class SHB_DB
 	public function get_booking_by_token($token)
 	{
 		$table = $this->get_table_bookings();
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$sql = "SELECT * FROM {$table} WHERE access_token = %s";
 		return $this->wpdb->get_row(
-			$this->wpdb->prepare("SELECT * FROM {$table} WHERE access_token = %s", sanitize_text_field($token))
+			$this->wpdb->prepare($sql, sanitize_text_field($token))
 		);
 	}
 
@@ -980,17 +1063,12 @@ class SHB_DB
 			$sql = "SELECT * FROM {$table_bookings} b WHERE {$where_sql} ORDER BY {$order_by} {$limit_sql}";
 		}
 
-		// Debug: Log the query if WP_DEBUG is enabled
-		if (defined('WP_DEBUG') && WP_DEBUG) {
-			error_log('SHB get_bookings SQL: ' . $sql);
-		}
 
+
+
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$results = $this->wpdb->get_results($sql);
-
-		// Debug: Log any database errors
-		if ($this->wpdb->last_error) {
-			error_log('SHB get_bookings Error: ' . $this->wpdb->last_error);
-		}
 
 		return $results;
 	}
@@ -1208,11 +1286,11 @@ class SHB_DB
 	{
 		$table = $this->get_table_booking_dates();
 
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$sql = "SELECT * FROM {$table} WHERE booking_id = %d ORDER BY booking_date ASC";
+
 		$results = $this->wpdb->get_results(
-			$this->wpdb->prepare(
-				"SELECT * FROM {$table} WHERE booking_id = %d ORDER BY booking_date ASC",
-				$booking_id
-			)
+			$this->wpdb->prepare($sql, $booking_id)
 		);
 
 		return $results ? $results : array();
@@ -1273,9 +1351,8 @@ class SHB_DB
 		// IMPORTANT: Use d.slot_id and d.booking_date (from booking_dates table)
 		// NOT b.slot_id or b.booking_date (from bookings table)
 		// because each date in a multi-day booking can have a different slot
-		$multiday_bookings = $this->wpdb->get_results(
-			$this->wpdb->prepare(
-				"SELECT b.id, b.hall_id, d.slot_id, d.booking_date, b.customer_name, 
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$sql = "SELECT b.id, b.hall_id, d.slot_id, d.booking_date, b.customer_name, 
 			       b.customer_email, b.customer_phone, b.event_purpose, 
 			       b.attendees_count, b.status, b.access_token, b.pin, 
 			       b.admin_notes, b.created_at, b.booking_type
@@ -1284,17 +1361,16 @@ class SHB_DB
 			WHERE b.hall_id = %d 
 			AND d.booking_date = %s
 			AND b.booking_type = 'multiday'
-			AND b.status != 'cancelled'",
-				$hall_id,
-				$date
-			)
+			AND b.status != 'cancelled'";
+
+		$multiday_bookings = $this->wpdb->get_results(
+			$this->wpdb->prepare($sql, $hall_id, $date)
 		);
 
 		// Get single day bookings for this date
 		// Now also using booking_dates table for consistency
-		$single_bookings = $this->wpdb->get_results(
-			$this->wpdb->prepare(
-				"SELECT b.id, b.hall_id, d.slot_id, d.booking_date, b.customer_name, 
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$sql = "SELECT b.id, b.hall_id, d.slot_id, d.booking_date, b.customer_name, 
 			       b.customer_email, b.customer_phone, b.event_purpose, 
 			       b.attendees_count, b.status, b.access_token, b.pin, 
 			       b.admin_notes, b.created_at, b.booking_type
@@ -1303,10 +1379,10 @@ class SHB_DB
 			WHERE b.hall_id = %d 
 			AND d.booking_date = %s
 			AND b.booking_type = 'single'
-			AND b.status != 'cancelled'",
-				$hall_id,
-				$date
-			)
+			AND b.status != 'cancelled'";
+
+		$single_bookings = $this->wpdb->get_results(
+			$this->wpdb->prepare($sql, $hall_id, $date)
 		);
 
 		// Merge both arrays
@@ -1335,7 +1411,7 @@ class SHB_DB
 		$all_slots = $this->get_slots_by_hall($hall_id, array('is_active' => 1));
 
 		// Check day of week
-		$day_of_week = date('w', strtotime($date));
+		$day_of_week = wp_date('w', strtotime($date));
 
 		// Filter slots by enabled days
 		$slots = array_filter(
@@ -1458,29 +1534,13 @@ class SHB_DB
 	 */
 	public function is_slot_available($hall_id, $slot_id, $date)
 	{
-		if (defined('WP_DEBUG') && WP_DEBUG) {
-			error_log('SHB: Checking availability - Hall: ' . $hall_id . ', Slot: ' . $slot_id . ', Date: ' . $date);
-		}
 
 		$available_slots = $this->get_available_slots($hall_id, $date);
 
-		if (defined('WP_DEBUG') && WP_DEBUG) {
-			error_log('SHB: Available slots count: ' . count($available_slots));
-			error_log('SHB: Available slot IDs: ' . implode(', ', array_map(function ($s) {
-				return $s->id; }, $available_slots)));
-		}
-
 		foreach ($available_slots as $slot) {
 			if (absint($slot->id) === absint($slot_id)) {
-				if (defined('WP_DEBUG') && WP_DEBUG) {
-					error_log('SHB: Slot ' . $slot_id . ' IS available!');
-				}
 				return true;
 			}
-		}
-
-		if (defined('WP_DEBUG') && WP_DEBUG) {
-			error_log('SHB: Slot ' . $slot_id . ' is NOT available!');
 		}
 
 		return false;
@@ -1502,6 +1562,7 @@ class SHB_DB
 			$sql .= $this->wpdb->prepare(' AND id != %d', $exclude_slot_id);
 		}
 
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$count = $this->wpdb->get_var($this->wpdb->prepare($sql, $hall_id));
 
 		return $count > 0;
@@ -1528,14 +1589,14 @@ class SHB_DB
 		}
 
 		// Get only PARTIAL slots for overlap checking
-		$slots = $this->get_slots_by_hall($hall_id, array('slot_type' => 'partial'));
+		$slots = $this->get_slots_by_hall($hall_id, array('slot_type' => 'partial'), $exclude_slot_id);
 
 		$new_start = strtotime($start_time);
 		$new_end = strtotime($end_time);
 
 		foreach ($slots as $slot) {
 			// Skip the slot being edited
-			if ($exclude_slot_id > 0 && $slot->id === $exclude_slot_id) {
+			if ($exclude_slot_id > 0 && (int) $slot->id === (int) $exclude_slot_id) {
 				continue;
 			}
 
@@ -1607,10 +1668,11 @@ class SHB_DB
 				'valid' => false,
 				/* translators: %s: overlapping slot label */
 				'message' => sprintf(
-					__('Time slot overlaps with existing partial slot: %s (%s - %s)', 'simple-hall-booking-manager'),
+					/* translators: 1: overlapping slot label, 2: start time, 3: end time */
+					__('Time slot overlaps with existing slot: %1$s (%2$s - %3$s)', 'simple-hall-booking-manager'),
 					$overlap->label,
-					date('g:i A', strtotime($overlap->start_time)),
-					date('g:i A', strtotime($overlap->end_time))
+					wp_date('g:i A', strtotime($overlap->start_time)),
+					wp_date('g:i A', strtotime($overlap->end_time))
 				),
 			);
 		}
@@ -1794,11 +1856,10 @@ class SHB_DB
 			$attempt++;
 
 			// Check if PIN already exists
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			$sql = "SELECT COUNT(*) FROM {$this->get_table_bookings()} WHERE pin = %s";
 			$exists = $this->wpdb->get_var(
-				$this->wpdb->prepare(
-					"SELECT COUNT(*) FROM {$this->get_table_bookings()} WHERE pin = %s",
-					$pin
-				)
+				$this->wpdb->prepare($sql, $pin)
 			);
 
 			if (!$exists) {
@@ -1821,11 +1882,11 @@ class SHB_DB
 		// Generate 2 random uppercase letters
 		$letters = '';
 		for ($i = 0; $i < 2; $i++) {
-			$letters .= chr(rand(65, 90)); // A-Z ASCII codes
+			$letters .= chr(wp_rand(65, 90)); // A-Z ASCII codes
 		}
 
 		// Generate 4 random digits
-		$digits = str_pad(rand(0, 9999), 4, '0', STR_PAD_LEFT);
+		$digits = str_pad(wp_rand(0, 9999), 4, '0', STR_PAD_LEFT);
 
 		return $letters . $digits;
 	}
@@ -1840,11 +1901,10 @@ class SHB_DB
 	{
 		$table = $this->get_table_bookings();
 
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$sql = "SELECT * FROM {$table} WHERE pin = %s";
 		return $this->wpdb->get_row(
-			$this->wpdb->prepare(
-				"SELECT * FROM {$table} WHERE pin = %s",
-				strtoupper(sanitize_text_field($pin))
-			)
+			$this->wpdb->prepare($sql, strtoupper(sanitize_text_field($pin)))
 		);
 	}
 }

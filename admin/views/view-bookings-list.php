@@ -175,8 +175,7 @@ $message = isset($_GET['message']) ? sanitize_text_field($_GET['message']) : '';
 				<p class="search-box">
 					<label class="screen-reader-text"
 						for="post-search-input"><?php esc_html_e('Search Bookings:', 'simple-hall-booking-manager'); ?></label>
-					<input type="search" id="post-search-input" name="s"
-						value="<?php echo esc_attr($search_term); ?>">
+					<input type="search" id="post-search-input" name="s" value="<?php echo esc_attr($search_term); ?>">
 					<input type="submit" id="search-submit" class="button"
 						value="<?php esc_attr_e('Search Bookings', 'simple-hall-booking-manager'); ?>">
 				</p>
@@ -226,7 +225,11 @@ $message = isset($_GET['message']) ? sanitize_text_field($_GET['message']) : '';
 						if ($first_date !== $last_date) {
 							$date_display .= ' - ' . shb_format_date($last_date);
 						}
-						$date_display .= '<br><small>' . sprintf(_n('%d day', '%d days', $date_count, 'simple-hall-booking-manager'), $date_count) . '</small>';
+						$date_display .= '<br><small>' . sprintf(
+							/* translators: %d: number of days */
+							_n('%d day', '%d days', $date_count, 'simple-hall-booking-manager'),
+							$date_count
+						) . '</small>';
 					} elseif (!empty($booking_dates)) {
 						// Single-day booking
 						$date_display = shb_format_date($booking_dates[0]->booking_date);
@@ -249,7 +252,11 @@ $message = isset($_GET['message']) ? sanitize_text_field($_GET['message']) : '';
 							<?php echo wp_kses_post($date_display); ?>
 							<?php if ($has_conflicts): ?>
 								<br><span class="shb-conflict-badge"
-									title="<?php echo esc_attr(sprintf(_n('%d conflict', '%d conflicts', $conflict_count, 'simple-hall-booking-manager'), $conflict_count)); ?>">⚠️</span>
+									title="<?php echo esc_attr(sprintf(
+										/* translators: %d: number of conflicts */
+										_n('%d conflict', '%d conflicts', $conflict_count, 'simple-hall-booking-manager'),
+										$conflict_count
+									)); ?>">⚠️</span>
 							<?php endif; ?>
 						</td>
 						<td><?php echo $hall ? esc_html($hall->title) : '-'; ?></td>
@@ -260,8 +267,8 @@ $message = isset($_GET['message']) ? sanitize_text_field($_GET['message']) : '';
 						</td>
 						<td>
 							<code style="font-weight: bold; letter-spacing: 1px;">
-										<?php echo esc_html($booking->pin); ?>
-									</code>
+												<?php echo esc_html($booking->pin); ?>
+											</code>
 						</td>
 						<td>
 							<span class="shb-status-badge shb-status-<?php echo esc_attr($booking->status); ?>">

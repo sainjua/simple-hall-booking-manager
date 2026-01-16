@@ -1,8 +1,8 @@
 === Simple Hall Booking Manager ===
-Contributors: yourusername
+Contributors: sainjua
 Tags: booking, hall booking, event booking, calendar, reservation
 Requires at least: 6.0
-Tested up to: 6.4
+Tested up to: 6.7
 Requires PHP: 7.4
 Stable tag: 1.0.0
 License: GPLv2 or later
@@ -157,11 +157,11 @@ Initial release of Simple Hall Booking Manager.
 
 ### Support
 
-For support, feature requests, or bug reports, please visit our [support forum](https://wordpress.org/support/plugin/simple-hall-booking-manager/) or [GitHub repository](https://github.com/yourusername/simple-hall-booking-manager).
+For support, feature requests, or bug reports, please visit our [support forum](https://wordpress.org/support/plugin/simple-hall-booking-manager/).
 
 ### Contributing
 
-We welcome contributions! Please see our [GitHub repository](https://github.com/yourusername/simple-hall-booking-manager) for development guidelines.
+We welcome contributions! Please see our [GitHub repository](https://github.com/sainjua/simple-hall-booking-manager) for development guidelines.
 
 ### Roadmap
 
@@ -177,7 +177,12 @@ We welcome contributions! Please see our [GitHub repository](https://github.com/
 
 ### Privacy Policy
 
-This plugin stores booking information including customer names, email addresses, and phone numbers in your WordPress database. This data is used solely for booking management and communication purposes. The plugin does not share data with external services except for sending emails via your WordPress mail configuration.
+This plugin stores booking information including customer names, email addresses, and phone numbers in your WordPress database. This data is used solely for booking management and communication purposes.
+
+**External Services:**
+If enabled in the settings, this plugin uses **Google reCAPTCHA v3** to prevent spam submissions. Use of reCAPTCHA is subject to the [Google Privacy Policy](https://policies.google.com/privacy) and [Terms of Use](https://policies.google.com/terms). Data shared with Google includes your users' IP address and behavioral data for risk analysis.
+
+The plugin does not share data with other external services except for sending emails via your WordPress mail configuration.
 
 ### Credits
 
