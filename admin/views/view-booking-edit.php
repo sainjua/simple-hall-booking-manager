@@ -11,6 +11,7 @@ if (!defined('ABSPATH')) {
 }
 
 $db = shb()->db;
+// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only GET operation to display booking data
 $booking_id = isset($_GET['id']) ? absint($_GET['id']) : 0;
 $booking = $booking_id ? $db->get_booking($booking_id) : null;
 

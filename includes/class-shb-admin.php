@@ -272,7 +272,7 @@ class SHB_Admin
 	 */
 	public function handle_admin_actions()
 	{
-		// Check if we're on our admin pages
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Only checking page parameter for routing
 		if (!isset($_GET['page']) || false === strpos(sanitize_text_field(wp_unslash($_GET['page'])), 'shb-')) {
 			return;
 		}
@@ -283,7 +283,8 @@ class SHB_Admin
 			$this->handle_save_hall();
 		}
 
-		if (isset($_GET['action']) && 'delete_hall' === $_GET['action'] && isset($_GET['id'])) {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verified in handle_delete_hall method
+		if (isset($_GET['action']) && 'delete_hall' === sanitize_text_field(wp_unslash($_GET['action'])) && isset($_GET['id'])) {
 			$this->handle_delete_hall();
 		}
 
@@ -293,7 +294,8 @@ class SHB_Admin
 			$this->handle_save_slot();
 		}
 
-		if (isset($_GET['action']) && 'delete_slot' === $_GET['action'] && isset($_GET['id'])) {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verified in handle_delete_slot method
+		if (isset($_GET['action']) && 'delete_slot' === sanitize_text_field(wp_unslash($_GET['action'])) && isset($_GET['id'])) {
 			$this->handle_delete_slot();
 		}
 
@@ -303,7 +305,8 @@ class SHB_Admin
 			$this->handle_save_booking();
 		}
 
-		if (isset($_GET['action']) && 'delete_booking' === $_GET['action'] && isset($_GET['id'])) {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verified in handle_delete_booking method
+		if (isset($_GET['action']) && 'delete_booking' === sanitize_text_field(wp_unslash($_GET['action'])) && isset($_GET['id'])) {
 			$this->handle_delete_booking();
 		}
 	}
@@ -349,13 +352,18 @@ class SHB_Admin
 	 */
 	private function handle_delete_hall()
 	{
-		check_admin_referer('shb_delete_hall_' . absint($_GET['id']));
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated -- Validated via check_admin_referer
+		if (!isset($_GET['id'])) {
+			wp_die(esc_html__('Invalid hall ID.', 'simple-hall-booking-manager'));
+		}
+
+		$hall_id = absint($_GET['id']);
+		check_admin_referer('shb_delete_hall_' . $hall_id);
 
 		if (!current_user_can('manage_options')) {
 			wp_die(esc_html__('You do not have permission to perform this action.', 'simple-hall-booking-manager'));
 		}
 
-		$hall_id = absint($_GET['id']);
 		$db = shb()->db;
 		$result = $db->delete_hall($hall_id);
 		$message = $result ? 'deleted' : 'error';
@@ -432,13 +440,6 @@ class SHB_Admin
 		// Validation passed, save slot
 		if ($slot_id > 0) {
 			// Update
-			// We don't unset hall_id here because update_slot might need it, although update_slot now fetches it from DB. 
-			// But to be safe and cleaner, we just pass what we have. update_slot logic handles it.
-			// Actually, update_slot uses get_slot to find hall_id, so passing it in valid $data is redundant but harmless.
-			// However, if we change hall_id (move slot to another hall), we should pass it. 
-			// The form sends hall_id from hidden field? No, form usually doesn't send hall_id for slot edit modal?
-			// Let's assume hall_id is fixed for a slot.
-
 			$result = $db->update_slot($slot_id, $data);
 
 			if ($result) {
@@ -490,13 +491,18 @@ class SHB_Admin
 	 */
 	private function handle_delete_slot()
 	{
-		check_admin_referer('shb_delete_slot_' . absint($_GET['id']));
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated -- Validated via check_admin_referer
+		if (!isset($_GET['id'])) {
+			wp_die(esc_html__('Invalid slot ID.', 'simple-hall-booking-manager'));
+		}
+
+		$slot_id = absint($_GET['id']);
+		check_admin_referer('shb_delete_slot_' . $slot_id);
 
 		if (!current_user_can('manage_options')) {
 			wp_die(esc_html__('You do not have permission to perform this action.', 'simple-hall-booking-manager'));
 		}
 
-		$slot_id = absint($_GET['id']);
 		$hall_id = isset($_GET['hall_id']) ? absint($_GET['hall_id']) : 0;
 		$db = shb()->db;
 		$result = $db->delete_slot($slot_id);
@@ -561,13 +567,18 @@ class SHB_Admin
 	 */
 	private function handle_delete_booking()
 	{
-		check_admin_referer('shb_delete_booking_' . absint($_GET['id']));
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated -- Validated via check_admin_referer
+		if (!isset($_GET['id'])) {
+			wp_die(esc_html__('Invalid booking ID.', 'simple-hall-booking-manager'));
+		}
+
+		$booking_id = absint($_GET['id']);
+		check_admin_referer('shb_delete_booking_' . $booking_id);
 
 		if (!current_user_can('manage_options')) {
 			wp_die(esc_html__('You do not have permission to perform this action.', 'simple-hall-booking-manager'));
 		}
 
-		$booking_id = absint($_GET['id']);
 		$db = shb()->db;
 		$result = $db->delete_booking($booking_id);
 		$message = $result ? 'booking_deleted' : 'error';
@@ -581,7 +592,8 @@ class SHB_Admin
 	 */
 	public function render_halls_page()
 	{
-		$action = isset($_GET['action']) ? sanitize_text_field($_GET['action']) : 'list';
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- GET parameter used only for page routing
+		$action = isset($_GET['action']) ? sanitize_text_field(wp_unslash($_GET['action'])) : 'list';
 
 		if ('edit' === $action) {
 			include SHB_PLUGIN_DIR . 'admin/views/view-hall-edit.php';
@@ -597,7 +609,8 @@ class SHB_Admin
 	 */
 	public function render_bookings_page()
 	{
-		$action = isset($_GET['action']) ? sanitize_text_field($_GET['action']) : 'list';
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- GET parameter used only for page routing
+		$action = isset($_GET['action']) ? sanitize_text_field(wp_unslash($_GET['action'])) : 'list';
 
 		if ('edit' === $action) {
 			include SHB_PLUGIN_DIR . 'admin/views/view-booking-edit.php';
@@ -622,4 +635,3 @@ class SHB_Admin
 		include SHB_PLUGIN_DIR . 'admin/views/view-settings.php';
 	}
 }
-

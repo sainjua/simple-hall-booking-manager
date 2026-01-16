@@ -465,13 +465,8 @@ class SHB_Emails
 								<ul style="margin: 5px 0; padding-left: 20px;">
 									<?php foreach ($booking_dates as $date_record): ?>
 										<?php
-										global $wpdb;
-										$date_slot = $wpdb->get_row(
-											$wpdb->prepare(
-												"SELECT * FROM {$wpdb->prefix}shb_slots WHERE id = %d",
-												$date_record->slot_id
-											)
-										);
+										// Replace direct DB query with helper method
+										$date_slot = shb()->db->get_slot($date_record->slot_id);
 										?>
 										<li>
 											<?php echo esc_html(shb_format_date($date_record->booking_date)); ?>

@@ -4,18 +4,15 @@
  *
  * @package SimpleHallBookingManager
  */
-
 // Exit if accessed directly
 if (!defined('ABSPATH')) {
 	exit;
 }
-
 /**
  * Frontend class
  */
 class SHB_Frontend
 {
-
 	/**
 	 * Constructor
 	 */
@@ -23,7 +20,6 @@ class SHB_Frontend
 	{
 		add_action('wp_enqueue_scripts', array($this, 'enqueue_assets'));
 	}
-
 	/**
 	 * Enqueue frontend assets
 	 */
@@ -34,32 +30,26 @@ class SHB_Frontend
 		if (!is_a($post, 'WP_Post')) {
 			return;
 		}
-
 		$has_shortcode = has_shortcode($post->post_content, 'shb_hall_list') ||
 			has_shortcode($post->post_content, 'shb_booking_form') ||
 			has_shortcode($post->post_content, 'shb_user_bookings');
-
 		if (!$has_shortcode) {
 			return;
 		}
-
 		// Get reCAPTCHA settings
 		$general_settings = get_option('shb_general_settings', array());
 		$recaptcha_enabled = isset($general_settings['recaptcha_enabled']) ? $general_settings['recaptcha_enabled'] : 'no';
 		$recaptcha_site_key = isset($general_settings['recaptcha_site_key']) ? $general_settings['recaptcha_site_key'] : '';
-
 		// Enqueue Google reCAPTCHA if enabled and has booking form
 		if ('yes' === $recaptcha_enabled && !empty($recaptcha_site_key) && has_shortcode($post->post_content, 'shb_booking_form')) {
-			// phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion -- External Google reCAPTCHA script, version not applicable
 			wp_enqueue_script(
 				'google-recaptcha',
 				'https://www.google.com/recaptcha/api.js?render=' . esc_attr($recaptcha_site_key),
 				array(),
-				null,
+				'3.0', // Google reCAPTCHA v3 version
 				true
 			);
 		}
-
 		// CSS
 		wp_enqueue_style(
 			'shb-frontend-css',
@@ -67,7 +57,6 @@ class SHB_Frontend
 			array(),
 			SHB_VERSION
 		);
-
 		// JS
 		wp_enqueue_script(
 			'shb-frontend-js',
@@ -76,7 +65,6 @@ class SHB_Frontend
 			SHB_VERSION,
 			true
 		);
-
 		// Localize script
 		wp_localize_script(
 			'shb-frontend-js',
@@ -97,4 +85,3 @@ class SHB_Frontend
 		);
 	}
 }
-

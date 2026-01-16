@@ -14,13 +14,17 @@ $db = shb()->db;
 
 // Pagination setup
 $per_page = 20; // Items per page
+// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read‑only pagination GET
 $current_page = isset($_GET['paged']) ? max(1, absint($_GET['paged'])) : 1;
 $offset = ($current_page - 1) * $per_page;
 
 // Handle filters
-$filter_status = isset($_GET['filter_status']) ? sanitize_text_field($_GET['filter_status']) : '';
+// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- Read‑only filter GET
+$filter_status = isset($_GET['filter_status']) ? sanitize_text_field(wp_unslash($_GET['filter_status'])) : '';
+// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read‑only filter GET
 $filter_hall_id = isset($_GET['filter_hall']) ? absint($_GET['filter_hall']) : '';
-$search_term = isset($_GET['s']) ? sanitize_text_field($_GET['s']) : '';
+// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- Read‑only search GET
+$search_term = isset($_GET['s']) ? sanitize_text_field(wp_unslash($_GET['s'])) : '';
 
 $filters = array(
 	'limit' => $per_page,
@@ -64,7 +68,8 @@ $status_links = array(
 );
 
 // Handle messages
-$message = isset($_GET['message']) ? sanitize_text_field($_GET['message']) : '';
+// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- Read‑only message GET
+$message = isset($_GET['message']) ? sanitize_text_field(wp_unslash($_GET['message'])) : '';
 ?>
 
 <div class="wrap">
@@ -266,8 +271,8 @@ $message = isset($_GET['message']) ? sanitize_text_field($_GET['message']) : '';
 						</td>
 						<td>
 							<code style="font-weight: bold; letter-spacing: 1px;">
-														<?php echo esc_html($booking->pin); ?>
-													</code>
+																<?php echo esc_html($booking->pin); ?>
+															</code>
 						</td>
 						<td>
 							<span class="shb-status-badge shb-status-<?php echo esc_attr($booking->status); ?>">

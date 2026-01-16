@@ -12,6 +12,7 @@ if (!defined('ABSPATH')) {
 
 $db = shb()->db;
 $hall_id = isset($atts['hall_id']) ? absint($atts['hall_id']) : '';
+// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- GET parameter used only for pre-filling form field, no data processing
 $selected_hall = isset($_GET['hall_id']) ? absint($_GET['hall_id']) : $hall_id;
 
 $halls = $db->get_halls(array('status' => 'active'));
@@ -32,7 +33,9 @@ $halls = $db->get_halls(array('status' => 'active'));
 			<?php if ($hall_id): ?>
 				<?php
 				$hall = $db->get_hall($hall_id);
-				echo '<p><strong>' . esc_html($hall->title) . '</strong></p>';
+				if ($hall) {
+					echo '<p><strong>' . esc_html($hall->title) . '</strong></p>';
+				}
 				?>
 				<input type="hidden" name="hall_id" id="shb_hall_id" value="<?php echo esc_attr($hall_id); ?>">
 			<?php else: ?>
@@ -136,10 +139,4 @@ $halls = $db->get_halls(array('status' => 'active'));
 				<a href="https://policies.google.com/privacy"
 					target="_blank"><?php esc_html_e('Privacy Policy', 'simple-hall-booking-manager'); ?></a>
 				<?php esc_html_e('and', 'simple-hall-booking-manager'); ?>
-				<a href="https://policies.google.com/terms"
-					target="_blank"><?php esc_html_e('Terms of Service', 'simple-hall-booking-manager'); ?></a>
-				<?php esc_html_e('apply.', 'simple-hall-booking-manager'); ?>
-			</div>
-		<?php endif; ?>
-	</form>
-</div>
+				<a href="https://policies.google.com/term
