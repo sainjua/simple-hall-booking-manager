@@ -110,26 +110,10 @@ class SHB_Plugin
 	{
 		add_action('init', array($this, 'init'));
 
-		// Log plugin SQL queries
-		add_filter('query', array($this, 'log_plugin_queries'));
+
 	}
 
-	/**
-	 * Log SQL queries related to the plugin
-	 * 
-	 * @param string $query The SQL query.
-	 * @return string The SQL query (unmodified).
-	 */
-	public function log_plugin_queries($query)
-	{
-		if (false !== strpos($query, 'shb_')) {
-			$log_file = SHB_PLUGIN_DIR . 'shb_sql_log.txt';
-			$entry = "[" . date('Y-m-d H:i:s') . "] " . $query . "\n";
-			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_file_put_contents
-			file_put_contents($log_file, $entry, FILE_APPEND);
-		}
-		return $query;
-	}
+
 
 	/**
 	 * Initialize components
