@@ -1421,6 +1421,37 @@ class SHB_DB
 		return array_merge((array) $single_bookings, (array) $multiday_bookings);
 	}
 
+	/**
+	 * Get all booked dates for a hall within a range
+	 *
+	 * @param int    $hall_id    Hall ID.
+	 * @param string $start_date Start date (Y-m-d).
+	 * @param string $end_date   End date (Y-m-d).
+	 * @return array Array of objects containing booking_date, slot_id, booking_id, customer_name, status.
+	 */
+	public function get_hall_booked_dates($hall_id, $start_date, $end_date)
+	{
+		$table_bookings = $this->get_table_bookings();
+		$table_dates = $this->get_table_booking_dates();
+		$table_slots = $this->get_table_slots();
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$sql = "SELECT d.booking_date, d.slot_id, b.id as booking_id, b.customer_name, b.status,
+				       s.label as slot_label, s.start_time, s.end_time
+				FROM {$table_dates} d
+				JOIN {$table_bookings} b ON d.booking_id = b.id
+				LEFT JOIN {$table_slots} s ON d.slot_id = s.id
+				WHERE b.hall_id = %d
+				AND d.booking_date >= %s
+				AND d.booking_date <= %s
+				ORDER BY d.booking_date ASC";
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		return $this->wpdb->get_results(
+			$this->wpdb->prepare($sql, $hall_id, $start_date, $end_date)
+		);
+	}
+
 	// ============================================================
 	// AVAILABILITY & CONFLICTS
 	// ============================================================

@@ -15,50 +15,35 @@ $halls = $db->get_halls(array('status' => 'active'));
 $current_hall_id = isset($_GET['hall_id']) ? absint($_GET['hall_id']) : (!empty($halls) ? $halls[0]->id : 0);
 
 // Get bookings for the calendar
-// Load a wider range of bookings so navigation works better without AJAX
+// Optimized fetch using get_hall_booked_dates to avoid N+1 queries
 $start_date = wp_date('Y-m-d', strtotime('-1 year'));
 $end_date = wp_date('Y-m-d', strtotime('+2 years'));
 
-$filters = array(
-	'date_from' => $start_date,
-	'date_to' => $end_date,
-);
+$events = array();
 
 if ($current_hall_id) {
-	$filters['hall_id'] = $current_hall_id;
-}
+	// Fetch all dates (with slots and booking info) in one query
+	$booked_dates = $db->get_hall_booked_dates($current_hall_id, $start_date, $end_date);
 
-$bookings = $db->get_bookings($filters);
+	foreach ($booked_dates as $b_date) {
+		$color = '#3788d8'; // Default blue
+		if ('pending' === $b_date->status) {
+			$color = '#fbc02d'; // Yellow
+		} elseif ('cancelled' === $b_date->status) {
+			$color = '#d32f2f'; // Red
+		} elseif ('confirmed' === $b_date->status) {
+			$color = '#4caf50'; // Green
+		}
 
-// Format events for FullCalendar
-$events = array();
-foreach ($bookings as $booking) {
-	$booking_dates = $db->get_booking_dates($booking->id);
-
-	if (empty($booking_dates)) {
-		continue;
-	}
-
-	$color = '#3788d8'; // Default blue
-	if ('pending' === $booking->status) {
-		$color = '#fbc02d'; // Yellow
-	} elseif ('cancelled' === $booking->status) {
-		$color = '#d32f2f'; // Red
-	} elseif ('confirmed' === $booking->status) {
-		$color = '#4caf50'; // Green
-	}
-
-	foreach ($booking_dates as $b_date) {
-		$slot = $db->get_slot($b_date->slot_id);
-		$slot_label = $slot ? $slot->label : 'Slot';
-		$start_time = $slot ? $slot->start_time : '00:00:00';
-		$end_time = $slot ? $slot->end_time : '23:59:59';
+		$slot_label = !empty($b_date->slot_label) ? $b_date->slot_label : 'Slot';
+		$start_time = !empty($b_date->start_time) ? $b_date->start_time : '00:00:00';
+		$end_time = !empty($b_date->end_time) ? $b_date->end_time : '23:59:59';
 
 		$events[] = array(
-			'title' => '#' . $booking->id . ' - ' . $booking->customer_name . ' (' . $slot_label . ')',
+			'title' => '#' . $b_date->booking_id . ' - ' . $b_date->customer_name . ' (' . $slot_label . ')',
 			'start' => $b_date->booking_date . 'T' . $start_time,
 			'end' => $b_date->booking_date . 'T' . $end_time,
-			'url' => admin_url('admin.php?page=shb-bookings&action=edit&id=' . $booking->id),
+			'url' => admin_url('admin.php?page=shb-bookings&action=edit&id=' . $b_date->booking_id),
 			'color' => $color,
 		);
 	}
