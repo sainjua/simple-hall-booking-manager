@@ -652,8 +652,7 @@ $status_color = isset($status_colors[$booking->status]) ? $status_colors[$bookin
 								</div>
 							</div>
 							<a href="<?php echo esc_url(shb_get_booking_access_url($booking->access_token)); ?>"
-								target="_blank" class="shb-btn shb-btn-outline"
-								style="width: 100%; justify-content: center; margin-top: 16px;">
+								target="_blank" class="shb-btn shb-btn-outline" style="margin-top: 16px;">
 								🔗 <?php esc_html_e('View Guest Page', 'simple-hall-booking-manager'); ?>
 							</a>
 						</div>
