@@ -316,6 +316,7 @@ if (true) {
 			padding: 0 !important;
 			height: 100%;
 			overflow: visible !important;
+			font-size: 10pt !important;
 		}
 
 		#wpcontent {
@@ -326,7 +327,7 @@ if (true) {
 
 		.shb-calendar-wrapper {
 			margin: 0 !important;
-			padding: 10px !important;
+			padding: 5px !important;
 			box-shadow: none !important;
 			border: none !important;
 			width: 100% !important;
@@ -339,7 +340,12 @@ if (true) {
 		}
 
 		.fc-header-toolbar {
-			margin-bottom: 15px !important;
+			display: none !important;
+		}
+
+		.fc-scroller {
+			overflow: visible !important;
+			height: auto !important;
 		}
 
 		/* Ensure colors are printed */
@@ -354,13 +360,25 @@ if (true) {
 			page-break-inside: avoid;
 		}
 
+		/* Compact Events */
+		.fc-event-title,
+		.fc-event-time {
+			font-size: 9px !important;
+			padding: 0 1px !important;
+		}
+
+		/* List View Compact */
+		.fc-list-table {
+			font-size: 10px !important;
+		}
+
 		/* Custom Header for Print */
 		.shb-calendar-wrapper::before {
 			content: "Hall Booking Calendar";
 			display: block;
-			font-size: 24px;
+			font-size: 18px;
 			font-weight: bold;
-			margin-bottom: 20px;
+			margin-bottom: 10px;
 			text-align: center;
 		}
 	}
@@ -426,13 +444,14 @@ if (true) {
 				headerToolbar: {
 					left: 'prev,next today',
 					center: 'title',
-					right: 'dayGridMonth,timeGridWeek,listMonth'
+					right: 'dayGridMonth,timeGridWeek,listMonth,listYear'
 				},
 				buttonText: {
 					today: '<?php esc_html_e('Today', 'simple-hall-booking-manager'); ?>',
 					month: '<?php esc_html_e('Month', 'simple-hall-booking-manager'); ?>',
 					week: '<?php esc_html_e('Week', 'simple-hall-booking-manager'); ?>',
-					list: '<?php esc_html_e('List', 'simple-hall-booking-manager'); ?>'
+					list: '<?php esc_html_e('List', 'simple-hall-booking-manager'); ?>',
+					listYear: '<?php esc_html_e('Year', 'simple-hall-booking-manager'); ?>'
 				},
 				events: <?php echo json_encode($events); ?>,
 				eventClick: function (info) {
