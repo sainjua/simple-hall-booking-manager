@@ -1,0 +1,29 @@
+# Test files (kept in test branch only)
+QUICK_TEST_CHECKLIST.txt
+TESTING_README.md
+TESTING_SUMMARY.txt
+TEST_CASES.txt
+TEST_PLAN.md
+automation-tests-puppeteer.js
+automation-tests.js
+package.json
+package-lock.json
+test-results.json
+test-screenshots/
+node_modules/
+
+# System files
+.DS_Store
+*.swp
+*.swo
+*~
+
+# IDE files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Temporary files
+*.log
+*.tmp
