@@ -84,9 +84,9 @@ if ('pending' === $booking->status) {
 		--shb-text-muted: #6b7280;
 		--shb-text-light: #9ca3af;
 		--shb-bg-card: #ffffff;
-		--shb-border-subtle: #f3f4f6;
+		--shb-border-subtle: #e2e8f0;
 		--shb-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-		--shb-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+		--shb-shadow-md: 0 1px 3px 0 rgba(0, 0, 0, 0.02), 0 1px 2px -1px rgba(0, 0, 0, 0.02);
 	}
 
 	.shb-container {
@@ -102,7 +102,7 @@ if ('pending' === $booking->status) {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		margin-bottom: 32px;
+		margin-bottom: 24px;
 	}
 
 	.shb-back-link {
@@ -111,7 +111,7 @@ if ('pending' === $booking->status) {
 		gap: 6px;
 		color: var(--shb-text-muted);
 		text-decoration: none;
-		font-size: 14px;
+		font-size: 13px;
 		font-weight: 500;
 		transition: color 0.2s;
 	}
@@ -121,41 +121,42 @@ if ('pending' === $booking->status) {
 	}
 
 	.shb-title-group h1 {
-		font-size: 28px;
-		font-weight: 700;
+		font-size: 24px;
+		font-weight: 600;
 		color: #111827;
 		margin: 0;
-		letter-spacing: -0.025em;
+		letter-spacing: -0.01em;
 		display: flex;
 		align-items: center;
 		gap: 12px;
 	}
 
 	.shb-id-pill {
-		font-size: 14px;
-		font-weight: 600;
-		background: #f3f4f6;
-		color: #4b5563;
-		padding: 4px 10px;
-		border-radius: 9999px;
+		font-size: 13px;
+		font-weight: 500;
+		background: #f1f5f9;
+		color: #64748b;
+		padding: 2px 8px;
+		border-radius: 4px;
 		vertical-align: middle;
 		letter-spacing: normal;
+		border: 1px solid #e2e8f0;
 	}
 
 	/* Grid Layout */
 	.shb-grid {
 		display: grid;
 		grid-template-columns: 2fr 1fr;
-		gap: 32px;
+		gap: 24px;
 		align-items: start;
 	}
 
 	/* Elegant Card Styling */
 	.shb-card {
 		background: var(--shb-bg-card);
-		border-radius: 12px;
+		border-radius: 6px;
 		box-shadow: var(--shb-shadow-md);
-		border: 1px solid rgba(0, 0, 0, 0.04);
+		border: 1px solid var(--shb-border-subtle);
 		margin-bottom: 24px;
 		overflow: hidden;
 	}
@@ -169,7 +170,7 @@ if ('pending' === $booking->status) {
 	}
 
 	.shb-card-header h3 {
-		font-size: 14px;
+		font-size: 13px;
 		font-weight: 600;
 		color: var(--shb-text-muted);
 		margin: 0;
@@ -182,9 +183,9 @@ if ('pending' === $booking->status) {
 
 	.shb-card-header .dashicons {
 		color: var(--shb-text-light);
-		font-size: 18px;
-		width: 18px;
-		height: 18px;
+		font-size: 16px;
+		width: 16px;
+		height: 16px;
 		vertical-align: text-bottom;
 	}
 
@@ -214,7 +215,7 @@ if ('pending' === $booking->status) {
 	}
 
 	.shb-value {
-		font-size: 15px;
+		font-size: 14px;
 		font-weight: 500;
 		color: #111827;
 		line-height: 1.5;
@@ -231,9 +232,9 @@ if ('pending' === $booking->status) {
 
 	/* Status Badge */
 	.shb-status {
-		padding: 6px 14px;
+		padding: 4px 12px;
 		border-radius: 9999px;
-		font-size: 13px;
+		font-size: 12px;
 		font-weight: 600;
 		letter-spacing: 0.025em;
 		text-transform: capitalize;
@@ -263,7 +264,7 @@ if ('pending' === $booking->status) {
 	/* PIN & Token */
 	.shb-access-box {
 		background: #f8fafc;
-		border-radius: 8px;
+		border-radius: 6px;
 		padding: 24px;
 		text-align: center;
 		border: 1px solid #e2e8f0;
@@ -271,10 +272,10 @@ if ('pending' === $booking->status) {
 
 	.shb-pin {
 		font-family: 'SF Mono', 'Roboto Mono', 'Courier New', monospace;
-		font-size: 36px;
+		font-size: 32px;
 		font-weight: 700;
 		color: #334155;
-		letter-spacing: 4px;
+		letter-spacing: 3px;
 		margin: 12px 0;
 		display: block;
 	}
@@ -296,9 +297,9 @@ if ('pending' === $booking->status) {
 		align-items: center;
 		justify-content: center;
 		gap: 8px;
-		padding: 10px 16px;
+		padding: 8px 16px;
 		border-radius: 6px;
-		font-size: 14px;
+		font-size: 13px;
 		font-weight: 500;
 		cursor: pointer;
 		transition: all 0.2s ease;
@@ -352,10 +353,10 @@ if ('pending' === $booking->status) {
 	select.shb-form-control {
 		display: block;
 		width: 100%;
-		padding: 10px;
+		padding: 8px 12px;
 		border: 1px solid #d1d5db;
 		border-radius: 6px;
-		font-size: 14px;
+		font-size: 13px;
 		color: #111827;
 		margin-top: 6px;
 		transition: border-color 0.15s;
@@ -367,15 +368,15 @@ if ('pending' === $booking->status) {
 	select.shb-form-control:focus {
 		border-color: var(--shb-primary);
 		outline: none;
-		box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+		box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
 	}
 
 	.shb-conflict-box {
 		background-color: #fff7ed;
 		border: 1px solid #fed7aa;
 		padding: 16px;
-		border-radius: 8px;
-		margin-bottom: 32px;
+		border-radius: 6px;
+		margin-bottom: 24px;
 		display: flex;
 		align-items: flex-start;
 		gap: 12px;
@@ -529,10 +530,8 @@ if ('pending' === $booking->status) {
 										<tr>
 											<td><strong><?php echo esc_html(shb_format_date($date_record->booking_date)); ?></strong>
 											</td>
-											<td><?php echo esc_html(wp_date('l', strtotime($date_record->booking_date))); ?>
-											</td>
-											<td><?php echo $d_slot ? esc_html($d_slot->label . ' (' . wp_date('g:i A', strtotime($d_slot->start_time)) . ' - ' . wp_date('g:i A', strtotime($d_slot->end_time)) . ')') : '-'; ?>
-											</td>
+											<td><?php echo esc_html(wp_date('l', strtotime($date_record->booking_date))); ?></td>
+											<td><?php echo $d_slot ? esc_html($d_slot->label . ' (' . wp_date('g:i A', strtotime($d_slot->start_time)) . ' - ' . wp_date('g:i A', strtotime($d_slot->end_time)) . ')') : '-'; ?></td>
 										</tr>
 									<?php endforeach; ?>
 								</tbody>
