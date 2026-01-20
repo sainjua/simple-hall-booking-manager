@@ -170,7 +170,7 @@ function shb_sort_link($id, $label, $current_orderby, $current_order)
 		/* box-shadow: 0 1px 2px rgba(60,64,67, 0.3); Removed per user request */
 		border: 1px solid #dadce0;
 		border-radius: 8px;
-		/* keeping radius for now, but removing shadow */
+		overflow: hidden;
 	}
 
 	.shb-table thead {
