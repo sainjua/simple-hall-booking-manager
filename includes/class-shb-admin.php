@@ -524,6 +524,29 @@ class SHB_Admin
 		}
 
 		$booking_id = isset($_POST['booking_id']) ? absint($_POST['booking_id']) : 0;
+
+		// Handle resend email request
+		if (isset($_POST['shb_resend_email'])) {
+			$booking = shb()->db->get_booking($booking_id);
+			if ($booking) {
+				$emails = shb()->emails;
+				$email_sent = false;
+
+				// Send email based on current status
+				if ('confirmed' === $booking->status) {
+					$email_sent = $emails->send_guest_confirmed($booking_id);
+				} elseif ('cancelled' === $booking->status) {
+					$email_sent = $emails->send_guest_cancelled($booking_id);
+				} elseif ('pending' === $booking->status) {
+					$email_sent = $emails->send_guest_pending($booking_id);
+				}
+
+				$message = $email_sent ? 'email_resent' : 'email_failed';
+				wp_safe_redirect(add_query_arg(array('message' => $message, 'id' => $booking_id), admin_url('admin.php?page=shb-booking-edit')));
+				exit;
+			}
+		}
+
 		$old_status = isset($_POST['old_status']) ? sanitize_text_field(wp_unslash($_POST['old_status'])) : '';
 		$new_status = isset($_POST['status']) ? sanitize_text_field(wp_unslash($_POST['status'])) : 'pending';
 

@@ -75,6 +75,31 @@ if ('pending' === $booking->status) {
 <div class="wrap">
 	<h1><?php esc_html_e('Edit Booking', 'simple-hall-booking-manager'); ?></h1>
 
+	<?php
+	// Display admin notices
+	// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only GET operation to display message
+	if (isset($_GET['message'])) {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized,WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- Read-only GET operation
+		$message = sanitize_text_field(wp_unslash($_GET['message']));
+
+		if ('email_resent' === $message) {
+			?>
+			<div class="notice notice-success is-dismissible">
+				<p><?php esc_html_e('Status email has been resent to the customer successfully.', 'simple-hall-booking-manager'); ?>
+				</p>
+			</div>
+			<?php
+		} elseif ('email_failed' === $message) {
+			?>
+			<div class="notice notice-error is-dismissible">
+				<p><?php esc_html_e('Failed to send email. Please check your email settings.', 'simple-hall-booking-manager'); ?>
+				</p>
+			</div>
+			<?php
+		}
+	}
+	?>
+
 	<?php if (!empty($conflicts)): ?>
 		<div class="shb-conflict-notice">
 			<h4>⚠️ <?php esc_html_e('Booking Conflicts Detected', 'simple-hall-booking-manager'); ?></h4>
@@ -283,6 +308,9 @@ if ('pending' === $booking->status) {
 		<p class="submit">
 			<input type="submit" name="shb_save_booking" class="button button-primary"
 				value="<?php esc_attr_e('Update Booking', 'simple-hall-booking-manager'); ?>">
+			<input type="submit" name="shb_resend_email" class="button button-secondary"
+				value="<?php esc_attr_e('Resend Status Email', 'simple-hall-booking-manager'); ?>"
+				onclick="return confirm('<?php esc_attr_e('Are you sure you want to resend the status email to the customer?', 'simple-hall-booking-manager'); ?>');">
 			<a href="<?php echo esc_url(admin_url('admin.php?page=shb-bookings')); ?>" class="button">
 				<?php esc_html_e('Back to Bookings', 'simple-hall-booking-manager'); ?>
 			</a>
