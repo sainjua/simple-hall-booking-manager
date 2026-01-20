@@ -10,6 +10,7 @@ A lightweight WordPress plugin to manage hall bookings with **full-day vs partia
 ## Features
 
 - ✅ **Guest booking** (no WP user account required)
+- ✅ **Customer organization field** (optional) for tracking company/organization bookings
 - ✅ **Smart conflict handling** between Full Day and Partial (Morning/Day/Evening) slots
 - ✅ **Per-hall cleaning buffer time** (in minutes) between bookings
 - ✅ **Admin management** for halls, slots, bookings, and email settings
@@ -131,7 +132,7 @@ Shows booking details using an access token from the query string (`?token=xxx`)
 
 1. **Guest visits your booking page** and selects a hall and date
 2. **System checks availability** via AJAX, showing only available time slots
-3. **Guest fills in their details** and submits the booking
+3. **Guest fills in their details** (name, email, phone, organization - optional) and submits the booking
 4. **Booking is created** with a unique access token
 5. **Emails are sent** to both admin and guest
 6. **Admin reviews** the booking in the WordPress admin panel
@@ -168,13 +169,18 @@ The plugin intelligently handles booking conflicts:
 
 ### Tables Created
 
-The plugin creates three custom database tables:
+The plugin creates four custom database tables:
 
 - `{prefix}_shb_halls` - Stores hall information
 - `{prefix}_shb_slots` - Stores time slot configurations
-- `{prefix}_shb_bookings` - Stores booking records
+- `{prefix}_shb_bookings` - Stores booking records (includes customer_organization field)
+- `{prefix}_shb_booking_dates` - Stores booking dates for multi-day bookings
 
 All tables use proper indexes for optimal performance.
+
+### Recent Updates
+
+**v1.4.0** - Added `customer_organization` field to bookings table for tracking company/organization bookings (optional field).
 
 ## Development
 
