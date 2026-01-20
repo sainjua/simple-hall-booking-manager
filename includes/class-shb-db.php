@@ -1085,12 +1085,13 @@ class SHB_DB
 
 		// Build query with or without JOIN
 		if ($needs_join) {
-			// When joining, we might get duplicate rows for multi-day bookings
-			// Use DISTINCT to avoid duplicates
-			$sql = "SELECT DISTINCT b.* 
+			// Use INNER JOIN when filtering by date/slot since we require matches
+			// GROUP BY b.id ensures we get unique bookings even if they match multiple dates
+			$sql = "SELECT b.* 
 					FROM {$table_bookings} b
-					LEFT JOIN {$table_booking_dates} d ON b.id = d.booking_id
+					INNER JOIN {$table_booking_dates} d ON b.id = d.booking_id
 					WHERE {$where_sql} 
+					GROUP BY b.id
 					ORDER BY {$order_by} 
 					{$limit_sql}";
 		} else {
