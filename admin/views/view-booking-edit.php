@@ -389,9 +389,9 @@ $status_color = isset($status_colors[$booking->status]) ? $status_colors[$bookin
 <div class="wrap shb-booking-edit-container">
 	<div class="shb-page-header">
 		<a href="<?php echo esc_url(admin_url('admin.php?page=shb-bookings')); ?>" class="shb-btn shb-btn-outline">
-			← <?php esc_html_e('Back to Bookings', 'simple-hall-booking-manager'); ?>
+			<span class="dashicons dashicons-arrow-left-alt"></span> <?php esc_html_e('Back to Bookings', 'simple-hall-booking-manager'); ?>
 		</a>
-		
+
 		<div style="display: flex; align-items: center; gap: 12px;">
 			<h1>
 				<?php esc_html_e('Edit Booking', 'simple-hall-booking-manager'); ?>
@@ -430,7 +430,9 @@ $status_color = isset($status_colors[$booking->status]) ? $status_colors[$bookin
 
 	<?php if (!empty($conflicts)): ?>
 		<div class="shb-conflict-alert">
-			<h4>⚠️ <?php esc_html_e('Booking Conflicts Detected', 'simple-hall-booking-manager'); ?></h4>
+			<h3 style="display: flex; align-items: center; gap: 8px;"><span class="dashicons dashicons-warning"
+					style="color: #92400e;"></span>
+				<?php esc_html_e('Booking Conflicts Detected', 'simple-hall-booking-manager'); ?></h3>
 			<p>
 				<?php
 				/* translators: %d: number of conflicts */
@@ -462,7 +464,7 @@ $status_color = isset($status_colors[$booking->status]) ? $status_colors[$bookin
 				<!-- Customer Information Card -->
 				<div class="shb-card">
 					<div class="shb-card-header">
-						<h3>👤 <?php esc_html_e('Customer Information', 'simple-hall-booking-manager'); ?></h3>
+						<h3><span class="dashicons dashicons-admin-users"></span> <?php esc_html_e('Customer Information', 'simple-hall-booking-manager'); ?></h3>
 					</div>
 					<div class="shb-card-body">
 						<div class="shb-info-row">
@@ -503,7 +505,7 @@ $status_color = isset($status_colors[$booking->status]) ? $status_colors[$bookin
 				<!-- Dates & Schedule Card -->
 				<div class="shb-card" style="margin-top: 20px;">
 					<div class="shb-card-header">
-						<h3>📅 <?php esc_html_e('Dates & Schedule', 'simple-hall-booking-manager'); ?></h3>
+						<h3><span class="dashicons dashicons-calendar-alt"></span> <?php esc_html_e('Dates & Schedule', 'simple-hall-booking-manager'); ?></h3>
 					</div>
 					<div class="shb-card-body">
 						<div class="shb-info-row">
@@ -514,7 +516,7 @@ $status_color = isset($status_colors[$booking->status]) ? $status_colors[$bookin
 								<?php if ('multiday' === $booking->booking_type): ?>
 									<span
 										style="background: #dbeafe; color: #1e40af; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 600;">
-										📅 <?php esc_html_e('Multi-Day', 'simple-hall-booking-manager'); ?>
+										<span class="dashicons dashicons-calendar-alt" style="font-size: 14px; width: 14px; height: 14px; vertical-align: middle;"></span> <?php esc_html_e('Multi-Day', 'simple-hall-booking-manager'); ?>
 									</span>
 								<?php else: ?>
 									<?php esc_html_e('Single Day', 'simple-hall-booking-manager'); ?>
@@ -595,7 +597,7 @@ $status_color = isset($status_colors[$booking->status]) ? $status_colors[$bookin
 				<!-- Event Details Card -->
 				<div class="shb-card" style="margin-top: 20px;">
 					<div class="shb-card-header">
-						<h3>🎉 <?php esc_html_e('Event Details', 'simple-hall-booking-manager'); ?></h3>
+						<h3><span class="dashicons dashicons-tickets-alt"></span> <?php esc_html_e('Event Details', 'simple-hall-booking-manager'); ?></h3>
 					</div>
 					<div class="shb-card-body">
 						<div class="shb-info-row">
@@ -605,7 +607,7 @@ $status_color = isset($status_colors[$booking->status]) ? $status_colors[$bookin
 								<strong><?php echo $hall ? esc_html($hall->title) : '-'; ?></strong>
 							</div>
 						</div>
-						
+
 						<?php if ($booking->event_purpose): ?>
 							<div class="shb-info-row">
 								<div class="shb-info-label"><?php esc_html_e('Purpose', 'simple-hall-booking-manager'); ?>
@@ -636,7 +638,7 @@ $status_color = isset($status_colors[$booking->status]) ? $status_colors[$bookin
 				<!-- PIN Card -->
 				<div class="shb-card">
 					<div class="shb-card-header">
-						<h3>🔑 <?php esc_html_e('Access Information', 'simple-hall-booking-manager'); ?></h3>
+						<h3><span class="dashicons dashicons-lock"></span> <?php esc_html_e('Access Information', 'simple-hall-booking-manager'); ?></h3>
 					</div>
 					<div class="shb-card-body">
 						<div class="shb-pin-display">
@@ -661,9 +663,8 @@ $status_color = isset($status_colors[$booking->status]) ? $status_colors[$bookin
 								</div>
 							</div>
 							<a href="<?php echo esc_url(shb_get_booking_access_url($booking->access_token)); ?>"
-								target="_blank" class="shb-btn shb-btn-outline"
-								style="margin-top: 16px;">
-								🔗 <?php esc_html_e('View Guest Page', 'simple-hall-booking-manager'); ?>
+								target="_blank" class="shb-btn shb-btn-outline" style="margin-top: 16px;">
+								<span class="dashicons dashicons-external"></span> <?php esc_html_e('View Guest Page', 'simple-hall-booking-manager'); ?>
 							</a>
 						</div>
 					</div>
@@ -672,7 +673,7 @@ $status_color = isset($status_colors[$booking->status]) ? $status_colors[$bookin
 				<!-- Admin Controls Card -->
 				<div class="shb-card" style="margin-top: 20px;">
 					<div class="shb-card-header">
-						<h3>⚙️ <?php esc_html_e('Admin Controls', 'simple-hall-booking-manager'); ?></h3>
+						<h3><span class="dashicons dashicons-admin-settings"></span> <?php esc_html_e('Admin Controls', 'simple-hall-booking-manager'); ?></h3>
 					</div>
 					<div class="shb-card-body">
 						<div class="shb-form-group">
@@ -702,11 +703,11 @@ $status_color = isset($status_colors[$booking->status]) ? $status_colors[$bookin
 
 						<div class="shb-action-buttons">
 							<button type="submit" name="shb_save_booking" class="shb-btn shb-btn-primary">
-								💾 <?php esc_attr_e('Update Booking', 'simple-hall-booking-manager'); ?>
+								<span class="dashicons dashicons-saved"></span> <?php esc_attr_e('Update Booking', 'simple-hall-booking-manager'); ?>
 							</button>
 							<button type="submit" name="shb_resend_email" class="shb-btn shb-btn-secondary"
 								onclick="return confirm('<?php esc_attr_e('Are you sure you want to resend the status email to the customer?', 'simple-hall-booking-manager'); ?>');">
-								📧 <?php esc_attr_e('Resend Email', 'simple-hall-booking-manager'); ?>
+								<span class="dashicons dashicons-email"></span> <?php esc_attr_e('Resend Email', 'simple-hall-booking-manager'); ?>
 							</button>
 						</div>
 					</div>
