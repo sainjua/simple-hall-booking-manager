@@ -1,3 +1,6 @@
+# Development documentation (kept in dev branch only)
+aidocument/
+
 # Test files (kept in test branch only)
 QUICK_TEST_CHECKLIST.txt
 TESTING_README.md
