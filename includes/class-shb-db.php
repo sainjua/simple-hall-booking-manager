@@ -1459,8 +1459,8 @@ class SHB_DB
 		$params[] = $start_date;
 		$params[] = $end_date;
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		return $this->wpdb->get_results(
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			$this->wpdb->prepare($sql, $params)
 		);
 	}

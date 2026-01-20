@@ -391,14 +391,18 @@ function shb_sort_link($id, $label, $current_orderby, $current_order)
 		<table class="shb-table">
 			<thead>
 				<tr>
-					<th><?php echo shb_sort_link('created_at', __('Created', 'simple-hall-booking-manager'), $orderby, $order); ?>
+					<th><?php // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+					echo shb_sort_link('created_at', __('Created', 'simple-hall-booking-manager'), $orderby, $order); ?>
 					</th>
-					<th><?php echo shb_sort_link('booking_date', __('Date', 'simple-hall-booking-manager'), $orderby, $order); ?>
+					<th><?php // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+					echo shb_sort_link('booking_date', __('Date', 'simple-hall-booking-manager'), $orderby, $order); ?>
 					</th>
-					<th><?php echo shb_sort_link('hall_id', __('Hall', 'simple-hall-booking-manager'), $orderby, $order); ?>
+					<th><?php // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+					echo shb_sort_link('hall_id', __('Hall', 'simple-hall-booking-manager'), $orderby, $order); ?>
 					</th>
 					<th><?php esc_html_e('Slot', 'simple-hall-booking-manager'); ?></th>
-					<th><?php echo shb_sort_link('customer_name', __('Customer', 'simple-hall-booking-manager'), $orderby, $order); ?>
+					<th><?php // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+					echo shb_sort_link('customer_name', __('Customer', 'simple-hall-booking-manager'), $orderby, $order); ?>
 					</th>
 					<th><?php esc_html_e('Status', 'simple-hall-booking-manager'); ?></th>
 					<th><?php esc_html_e('Actions', 'simple-hall-booking-manager'); ?></th>
@@ -429,6 +433,7 @@ function shb_sort_link($id, $label, $current_orderby, $current_order)
 						if ($first_date !== $last_date) {
 							$date_display .= ' - ' . shb_format_date($last_date);
 						}
+						/* translators: %d: number of days */
 						$date_display .= '<br><span class="shb-sub-text">' . sprintf(_n('%d day', '%d days', $date_count, 'simple-hall-booking-manager'), $date_count) . '</span>';
 					} elseif (!empty($booking_dates)) {
 						$date_display = shb_format_date($booking_dates[0]->booking_date);
@@ -456,7 +461,8 @@ function shb_sort_link($id, $label, $current_orderby, $current_order)
 							<?php echo wp_kses_post($date_display); ?>
 							<?php if ($has_conflicts): ?>
 								<span class="shb-conflict-badge"
-									title="<?php echo esc_attr(sprintf(_n('%d conflict', '%d conflicts', $conflict_count, 'simple-hall-booking-manager'), $conflict_count)); ?>">⚠️</span>
+									title="<?php /* translators: %d: number of conflicts */
+									echo esc_attr(sprintf(_n('%d conflict', '%d conflicts', $conflict_count, 'simple-hall-booking-manager'), $conflict_count)); ?>">⚠️</span>
 							<?php endif; ?>
 						</td>
 						<td><?php echo $hall ? esc_html($hall->title) : '-'; ?></td>
@@ -474,7 +480,10 @@ function shb_sort_link($id, $label, $current_orderby, $current_order)
 							</span>
 							<?php if ($has_conflicts): ?>
 								<div class="shb-conflict-text" style="font-size: 11px; margin-top: 4px;">
-									<?php printf(esc_html__('%d conflict(s)', 'simple-hall-booking-manager'), absint($conflict_count)); ?>
+									<?php
+									/* translators: %d: number of conflicts */
+									printf(esc_html__('%d conflict(s)', 'simple-hall-booking-manager'), absint($conflict_count));
+									?>
 								</div>
 							<?php endif; ?>
 						</td>
@@ -507,6 +516,7 @@ function shb_sort_link($id, $label, $current_orderby, $current_order)
 					'type' => 'plain',
 				));
 				if ($page_links)
+					// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 					echo $page_links;
 				?>
 			</div>

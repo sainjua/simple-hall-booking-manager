@@ -124,7 +124,7 @@ class SHB_Plugin
 	{
 		if (false !== strpos($query, 'shb_')) {
 			$log_file = SHB_PLUGIN_DIR . 'shb_sql_log.txt';
-			$entry = "[" . date('Y-m-d H:i:s') . "] " . $query . "\n";
+			$entry = "[" . gmdate('Y-m-d H:i:s') . "] " . $query . "\n";
 			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_file_put_contents
 			file_put_contents($log_file, $entry, FILE_APPEND);
 		}
