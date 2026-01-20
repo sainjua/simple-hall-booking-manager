@@ -102,15 +102,19 @@ $status_color = isset($status_colors[$booking->status]) ? $status_colors[$bookin
 		font-size: 24px;
 		font-weight: 600;
 		color: #1e293b;
+		display: inline-flex;
+		align-items: center;
+		gap: 12px;
 	}
 
 	.shb-booking-id-badge {
 		background: #f1f5f9;
 		color: #475569;
-		padding: 8px 16px;
+		padding: 4px 12px;
 		border-radius: 6px;
-		font-size: 14px;
+		font-size: 18px;
 		font-weight: 600;
+		vertical-align: middle;
 	}
 
 	.shb-status-badge {
@@ -384,13 +388,19 @@ $status_color = isset($status_colors[$booking->status]) ? $status_colors[$bookin
 
 <div class="wrap shb-booking-edit-container">
 	<div class="shb-page-header">
-		<div>
-			<h1><?php esc_html_e('Edit Booking', 'simple-hall-booking-manager'); ?></h1>
-			<span class="shb-booking-id-badge">#<?php echo esc_html($booking->id); ?></span>
+		<a href="<?php echo esc_url(admin_url('admin.php?page=shb-bookings')); ?>" class="shb-btn shb-btn-outline">
+			← <?php esc_html_e('Back to Bookings', 'simple-hall-booking-manager'); ?>
+		</a>
+
+		<div style="display: flex; align-items: center; gap: 12px;">
+			<h1>
+				<?php esc_html_e('Edit Booking', 'simple-hall-booking-manager'); ?>
+				<span class="shb-booking-id-badge">#<?php echo esc_html($booking->id); ?></span>
+			</h1>
+			<span class="shb-status-badge" style="background-color: <?php echo esc_attr($status_color); ?>">
+				<?php echo esc_html(shb_get_status_label($booking->status)); ?>
+			</span>
 		</div>
-		<span class="shb-status-badge" style="background-color: <?php echo esc_attr($status_color); ?>">
-			<?php echo esc_html(shb_get_status_label($booking->status)); ?>
-		</span>
 	</div>
 
 	<?php
@@ -641,6 +651,11 @@ $status_color = isset($status_colors[$booking->status]) ? $status_colors[$bookin
 							</code>
 								</div>
 							</div>
+							<a href="<?php echo esc_url(shb_get_booking_access_url($booking->access_token)); ?>"
+								target="_blank" class="shb-btn shb-btn-outline"
+								style="width: 100%; justify-content: center; margin-top: 16px;">
+								🔗 <?php esc_html_e('View Guest Page', 'simple-hall-booking-manager'); ?>
+							</a>
 						</div>
 					</div>
 				</div>
@@ -688,18 +703,6 @@ $status_color = isset($status_colors[$booking->status]) ? $status_colors[$bookin
 					</div>
 				</div>
 			</div>
-		</div>
-
-		<!-- Action Buttons Outside Cards -->
-		<div style="max-width: 1400px; margin: 20px 0; display: flex; gap: 12px;">
-			<a href="<?php echo esc_url(shb_get_booking_access_url($booking->access_token)); ?>" target="_blank"
-				class="shb-btn shb-btn-outline" style="flex: 1;">
-				🔗 <?php esc_html_e('View Guest Page', 'simple-hall-booking-manager'); ?>
-			</a>
-			<a href="<?php echo esc_url(admin_url('admin.php?page=shb-bookings')); ?>" class="shb-btn shb-btn-outline"
-				style="flex: 1;">
-				← <?php esc_html_e('Back to Bookings', 'simple-hall-booking-manager'); ?>
-			</a>
 		</div>
 	</form>
 </div>
