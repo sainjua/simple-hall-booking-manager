@@ -15,10 +15,9 @@ $halls = $db->get_halls(array('status' => 'active'));
 $current_hall_id = isset($_GET['hall_id']) ? absint($_GET['hall_id']) : (!empty($halls) ? $halls[0]->id : 0);
 
 // Get bookings for the calendar
-// Default to current month, but we can load more via AJAX or pre-load a range
-// For simplicity, let's load current month +/- 1 month
-$start_date = wp_date('Y-m-d', strtotime('-1 month'));
-$end_date = wp_date('Y-m-d', strtotime('+2 months'));
+// Load a wider range of bookings so navigation works better without AJAX
+$start_date = wp_date('Y-m-d', strtotime('-1 year'));
+$end_date = wp_date('Y-m-d', strtotime('+2 years'));
 
 $filters = array(
 	'date_from' => $start_date,
@@ -377,10 +376,10 @@ foreach ($bookings as $booking) {
 						info.jsEvent.preventDefault();
 					}
 				},
-				eventTimeFormat: { // like '14:30'
-					hour: '2-digit',
+				eventTimeFormat: { // like '2:30 PM'
+					hour: 'numeric',
 					minute: '2-digit',
-					meridiem: false
+					meridiem: 'short'
 				},
 				height: 'auto',
 				aspectRatio: 1.8,
