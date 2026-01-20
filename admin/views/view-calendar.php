@@ -288,6 +288,82 @@ if (true) {
 			border: 1px solid #ccc !important;
 		}
 	}
+
+	@media print {
+
+		/* Hide WordPress Admin Elements */
+		#adminmenumain,
+		#wpadminbar,
+		#adminmenuback,
+		#wpfooter,
+		.notice,
+		.updated,
+		.shb-calendar-controls,
+		.shb-print-btn,
+		.wp-heading-inline,
+		.wp-header-end,
+		#wpcontent>.wrap>h1,
+		#screen-meta,
+		#screen-meta-links {
+			display: none !important;
+		}
+
+		/* Reset Layout for Print */
+		html,
+		body {
+			background: #fff !important;
+			margin: 0 !important;
+			padding: 0 !important;
+			height: 100%;
+			overflow: visible !important;
+		}
+
+		#wpcontent {
+			margin-left: 0 !important;
+			padding: 0 !important;
+			background: #fff !important;
+		}
+
+		.shb-calendar-wrapper {
+			margin: 0 !important;
+			padding: 10px !important;
+			box-shadow: none !important;
+			border: none !important;
+			width: 100% !important;
+			max-width: 100% !important;
+		}
+
+		/* FullCalendar Corrections for Print */
+		.fc-theme-standard .fc-scrollgrid {
+			border: 1px solid #ddd !important;
+		}
+
+		.fc-header-toolbar {
+			margin-bottom: 15px !important;
+		}
+
+		/* Ensure colors are printed */
+		* {
+			-webkit-print-color-adjust: exact !important;
+			print-color-adjust: exact !important;
+		}
+
+		/* Avoid page breaks inside events */
+		.fc-event {
+			break-inside: avoid;
+			page-break-inside: avoid;
+		}
+
+		/* Custom Header for Print */
+		.shb-calendar-wrapper::before {
+			content: "Hall Booking Calendar";
+			display: block;
+			font-size: 24px;
+			font-weight: bold;
+			margin-bottom: 20px;
+			text-align: center;
+		}
+	}
 </style>
 
 <div class="wrap">
@@ -301,7 +377,8 @@ if (true) {
 					<input type="hidden" name="page" value="shb-calendar">
 					<select name="hall_id" id="filter_hall" onchange="this.form.submit()">
 						<option value="0" <?php selected($current_hall_id, 0); ?>>
-							<?php esc_html_e('All Halls', 'simple-hall-booking-manager'); ?></option>
+							<?php esc_html_e('All Halls', 'simple-hall-booking-manager'); ?>
+						</option>
 						<?php if (empty($halls)): ?>
 							<option value="" disabled>
 								<?php esc_html_e('No halls available', 'simple-hall-booking-manager'); ?>
