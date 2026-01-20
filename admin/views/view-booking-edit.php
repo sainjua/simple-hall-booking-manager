@@ -391,7 +391,7 @@ $status_color = isset($status_colors[$booking->status]) ? $status_colors[$bookin
 		<a href="<?php echo esc_url(admin_url('admin.php?page=shb-bookings')); ?>" class="shb-btn shb-btn-outline">
 			← <?php esc_html_e('Back to Bookings', 'simple-hall-booking-manager'); ?>
 		</a>
-
+		
 		<div style="display: flex; align-items: center; gap: 12px;">
 			<h1>
 				<?php esc_html_e('Edit Booking', 'simple-hall-booking-manager'); ?>
@@ -500,19 +500,12 @@ $status_color = isset($status_colors[$booking->status]) ? $status_colors[$bookin
 					</div>
 				</div>
 
-				<!-- Event Details Card -->
+				<!-- Dates & Schedule Card -->
 				<div class="shb-card" style="margin-top: 20px;">
 					<div class="shb-card-header">
-						<h3>📅 <?php esc_html_e('Event Details', 'simple-hall-booking-manager'); ?></h3>
+						<h3>📅 <?php esc_html_e('Dates & Schedule', 'simple-hall-booking-manager'); ?></h3>
 					</div>
 					<div class="shb-card-body">
-						<div class="shb-info-row">
-							<div class="shb-info-label"><?php esc_html_e('Hall', 'simple-hall-booking-manager'); ?>
-							</div>
-							<div class="shb-info-value">
-								<strong><?php echo $hall ? esc_html($hall->title) : '-'; ?></strong>
-							</div>
-						</div>
 						<div class="shb-info-row">
 							<div class="shb-info-label">
 								<?php esc_html_e('Booking Type', 'simple-hall-booking-manager'); ?>
@@ -596,7 +589,23 @@ $status_color = isset($status_colors[$booking->status]) ? $status_colors[$bookin
 								</div>
 							</div>
 						<?php endif; ?>
+					</div>
+				</div>
 
+				<!-- Event Details Card -->
+				<div class="shb-card" style="margin-top: 20px;">
+					<div class="shb-card-header">
+						<h3>🎉 <?php esc_html_e('Event Details', 'simple-hall-booking-manager'); ?></h3>
+					</div>
+					<div class="shb-card-body">
+						<div class="shb-info-row">
+							<div class="shb-info-label"><?php esc_html_e('Hall', 'simple-hall-booking-manager'); ?>
+							</div>
+							<div class="shb-info-value">
+								<strong><?php echo $hall ? esc_html($hall->title) : '-'; ?></strong>
+							</div>
+						</div>
+						
 						<?php if ($booking->event_purpose): ?>
 							<div class="shb-info-row">
 								<div class="shb-info-label"><?php esc_html_e('Purpose', 'simple-hall-booking-manager'); ?>
@@ -652,7 +661,8 @@ $status_color = isset($status_colors[$booking->status]) ? $status_colors[$bookin
 								</div>
 							</div>
 							<a href="<?php echo esc_url(shb_get_booking_access_url($booking->access_token)); ?>"
-								target="_blank" class="shb-btn shb-btn-outline" style="margin-top: 16px;">
+								target="_blank" class="shb-btn shb-btn-outline"
+								style="margin-top: 16px;">
 								🔗 <?php esc_html_e('View Guest Page', 'simple-hall-booking-manager'); ?>
 							</a>
 						</div>
