@@ -215,7 +215,7 @@ class SHB_DB
 	/**
 	 * Check and run database migrations
 	 */
-	private function check_and_run_migrations()
+	public function check_and_run_migrations()
 	{
 		$db_version = get_option('shb_db_version', '1.0.0');
 
@@ -241,6 +241,12 @@ class SHB_DB
 		if (version_compare($db_version, '1.4.0', '<')) {
 			$this->migrate_to_v140();
 			update_option('shb_db_version', '1.4.0');
+		}
+
+		// Force check for v1.4.1 (ensure customer_organization exists if 1.4.0 failed)
+		if (version_compare($db_version, '1.4.1', '<')) {
+			$this->migrate_to_v140();
+			update_option('shb_db_version', '1.4.1');
 		}
 	}
 

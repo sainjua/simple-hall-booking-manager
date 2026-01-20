@@ -173,6 +173,11 @@ class SHB_Plugin
 	 */
 	public function init()
 	{
+		// Check for DB migrations/updates on init to ensure schema is always up to date
+		if (isset($this->db)) {
+			$this->db->check_and_run_migrations();
+		}
+
 		// Register any custom post types, taxonomies, etc. if needed in the future
 		do_action('shb_init');
 	}
