@@ -1435,20 +1435,27 @@ class SHB_DB
 		$table_dates = $this->get_table_booking_dates();
 		$table_slots = $this->get_table_slots();
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$sql = "SELECT d.booking_date, d.slot_id, b.id as booking_id, b.customer_name, b.status,
+		$sql = "SELECT d.booking_date, d.slot_id, b.id as booking_id, b.customer_name, b.status, b.hall_id,
 				       s.label as slot_label, s.start_time, s.end_time
 				FROM {$table_dates} d
 				JOIN {$table_bookings} b ON d.booking_id = b.id
 				LEFT JOIN {$table_slots} s ON d.slot_id = s.id
-				WHERE b.hall_id = %d
-				AND d.booking_date >= %s
-				AND d.booking_date <= %s
-				ORDER BY d.booking_date ASC";
+				WHERE 1=1";
+
+		$params = array();
+
+		if (!empty($hall_id)) {
+			$sql .= " AND b.hall_id = %d";
+			$params[] = $hall_id;
+		}
+
+		$sql .= " AND d.booking_date >= %s AND d.booking_date <= %s ORDER BY d.booking_date ASC";
+		$params[] = $start_date;
+		$params[] = $end_date;
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		return $this->wpdb->get_results(
-			$this->wpdb->prepare($sql, $hall_id, $start_date, $end_date)
+			$this->wpdb->prepare($sql, $params)
 		);
 	}
 

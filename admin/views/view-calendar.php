@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) {
 
 $db = shb()->db;
 $halls = $db->get_halls(array('status' => 'active'));
-$current_hall_id = isset($_GET['hall_id']) ? absint($_GET['hall_id']) : (!empty($halls) ? $halls[0]->id : 0);
+$current_hall_id = isset($_GET['hall_id']) ? absint($_GET['hall_id']) : 0;
 
 // Get bookings for the calendar
 // Optimized fetch using get_hall_booked_dates to avoid N+1 queries
@@ -21,7 +21,7 @@ $end_date = wp_date('Y-m-d', strtotime('+2 years'));
 
 $events = array();
 
-if ($current_hall_id) {
+if (true) {
 	// Fetch all dates (with slots and booking info) in one query
 	$booked_dates = $db->get_hall_booked_dates($current_hall_id, $start_date, $end_date);
 
@@ -300,8 +300,11 @@ if ($current_hall_id) {
 				<form method="get" action="">
 					<input type="hidden" name="page" value="shb-calendar">
 					<select name="hall_id" id="filter_hall" onchange="this.form.submit()">
+						<option value="0" <?php selected($current_hall_id, 0); ?>>
+							<?php esc_html_e('All Halls', 'simple-hall-booking-manager'); ?></option>
 						<?php if (empty($halls)): ?>
-							<option value=""><?php esc_html_e('No halls available', 'simple-hall-booking-manager'); ?>
+							<option value="" disabled>
+								<?php esc_html_e('No halls available', 'simple-hall-booking-manager'); ?>
 							</option>
 						<?php else: ?>
 							<?php foreach ($halls as $hall): ?>
