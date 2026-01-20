@@ -169,6 +169,7 @@ class SHB_DB
 		customer_name varchar(255) NOT NULL,
 		customer_email varchar(255) NOT NULL,
 		customer_phone varchar(50),
+		customer_organization varchar(255),
 		event_purpose varchar(255),
 		attendees_count int(11) NOT NULL DEFAULT 0,
 		status enum('pending','confirmed','cancelled') NOT NULL DEFAULT 'pending',
@@ -234,6 +235,12 @@ class SHB_DB
 		if (version_compare($db_version, '1.3.0', '<')) {
 			$this->migrate_to_v130();
 			update_option('shb_db_version', '1.3.0');
+		}
+
+		// Migration for v1.4.0 (add customer_organization column)
+		if (version_compare($db_version, '1.4.0', '<')) {
+			$this->migrate_to_v140();
+			update_option('shb_db_version', '1.4.0');
 		}
 	}
 
@@ -389,6 +396,32 @@ class SHB_DB
 				"ALTER TABLE {$table_bookings} 
 				DROP INDEX slot_id,
 				DROP COLUMN slot_id"
+			);
+		}
+	}
+
+	/**
+	 * Migrate database to v1.4.0
+	 * Adds customer_organization column to bookings table
+	 */
+	private function migrate_to_v140()
+	{
+		$table_bookings = $this->get_table_bookings();
+
+		// Check if customer_organization column exists
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name must be interpolated
+		$sql = "SHOW COLUMNS FROM {$table_bookings} LIKE %s";
+		$column_exists = $this->wpdb->get_results(
+			$this->wpdb->prepare($sql, 'customer_organization') // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
+		);
+
+		// Add customer_organization column if it doesn't exist
+		if (empty($column_exists)) {
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			$this->wpdb->query(
+				"ALTER TABLE {$table_bookings} 
+				ADD COLUMN customer_organization varchar(255) DEFAULT NULL 
+				AFTER customer_phone"
 			);
 		}
 	}
@@ -821,6 +854,7 @@ class SHB_DB
 			'customer_name' => '',
 			'customer_email' => '',
 			'customer_phone' => '',
+			'customer_organization' => '',
 			'event_purpose' => '',
 			'attendees_count' => 0,
 			'status' => 'pending',
@@ -840,6 +874,7 @@ class SHB_DB
 				'customer_name' => sanitize_text_field($data['customer_name']),
 				'customer_email' => sanitize_email($data['customer_email']),
 				'customer_phone' => sanitize_text_field($data['customer_phone']),
+				'customer_organization' => sanitize_text_field($data['customer_organization']),
 				'event_purpose' => sanitize_text_field($data['event_purpose']),
 				'attendees_count' => absint($data['attendees_count']),
 				'status' => in_array($data['status'], array('pending', 'confirmed', 'cancelled'), true) ? $data['status'] : 'pending',
@@ -847,7 +882,7 @@ class SHB_DB
 				'pin' => strtoupper(sanitize_text_field($data['pin'])),
 				'admin_notes' => wp_kses_post($data['admin_notes']),
 			),
-			array('%d', '%s', '%s', '%s', '%s', '%s', '%d', '%s', '%s', '%s', '%s')
+			array('%d', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%s', '%s', '%s', '%s')
 		);
 
 		return $result ? $this->wpdb->insert_id : false;
@@ -886,6 +921,7 @@ class SHB_DB
 			'customer_name' => '%s',
 			'customer_email' => '%s',
 			'customer_phone' => '%s',
+			'customer_organization' => '%s',
 			'event_purpose' => '%s',
 			'attendees_count' => '%d',
 			'status' => '%s',

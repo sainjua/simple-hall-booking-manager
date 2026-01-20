@@ -40,11 +40,14 @@ $halls = $db->get_halls(array('status' => 'active'));
 				<input type="hidden" name="hall_id" id="shb_hall_id" value="<?php echo esc_attr($hall_id); ?>">
 			<?php else: ?>
 				<select name="hall_id" id="shb_hall_id" required>
-					<option value=""><?php esc_html_e('Choose a hall...', 'simple-hall-booking-manager'); ?></option>
+					<option value="">
+						<?php esc_html_e('Choose a hall...', 'simple-hall-booking-manager'); ?>
+					</option>
 					<?php foreach ($halls as $hall): ?>
 						<option value="<?php echo esc_attr($hall->id); ?>" <?php selected($selected_hall, $hall->id); ?>>
 							<?php echo esc_html($hall->title); ?>
-							(<?php esc_html_e('Capacity:', 'simple-hall-booking-manager'); ?>
+							(
+							<?php esc_html_e('Capacity:', 'simple-hall-booking-manager'); ?>
 							<?php echo esc_html($hall->capacity); ?>)
 						</option>
 					<?php endforeach; ?>
@@ -65,19 +68,25 @@ $halls = $db->get_halls(array('status' => 'active'));
 				<!-- Calendar will be rendered by JavaScript -->
 			</div>
 			<div id="shb-selected-dates-display" class="shb-selected-dates-display" style="display: none;">
-				<p class="shb-dates-label"><?php esc_html_e('Selected dates:', 'simple-hall-booking-manager'); ?></p>
+				<p class="shb-dates-label">
+					<?php esc_html_e('Selected dates:', 'simple-hall-booking-manager'); ?>
+				</p>
 				<div id="shb-selected-dates-with-slots" class="shb-selected-dates-with-slots">
 					<!-- Dates with slot selection will be rendered here -->
 				</div>
 				<p class="shb-dates-count">
-					<strong><?php esc_html_e('Total:', 'simple-hall-booking-manager'); ?></strong> <span
-						id="shb-dates-count">0</span> <?php esc_html_e('day(s)', 'simple-hall-booking-manager'); ?>
+					<strong>
+						<?php esc_html_e('Total:', 'simple-hall-booking-manager'); ?>
+					</strong> <span id="shb-dates-count">0</span>
+					<?php esc_html_e('day(s)', 'simple-hall-booking-manager'); ?>
 				</p>
 			</div>
 		</div>
 
 		<!-- Customer Information -->
-		<h3><?php esc_html_e('Your Information', 'simple-hall-booking-manager'); ?></h3>
+		<h3>
+			<?php esc_html_e('Your Information', 'simple-hall-booking-manager'); ?>
+		</h3>
 
 		<div class="shb-form-group">
 			<label for="shb_customer_name">
@@ -102,8 +111,17 @@ $halls = $db->get_halls(array('status' => 'active'));
 			<input type="tel" name="customer_phone" id="shb_customer_phone">
 		</div>
 
+		<div class="shb-form-group">
+			<label for="shb_customer_organization">
+				<?php esc_html_e('Organization', 'simple-hall-booking-manager'); ?>
+			</label>
+			<input type="text" name="customer_organization" id="shb_customer_organization">
+		</div>
+
 		<!-- Event Details -->
-		<h3><?php esc_html_e('Event Details', 'simple-hall-booking-manager'); ?></h3>
+		<h3>
+			<?php esc_html_e('Event Details', 'simple-hall-booking-manager'); ?>
+		</h3>
 
 		<div class="shb-form-group">
 			<label for="shb_event_purpose">
@@ -136,7 +154,15 @@ $halls = $db->get_halls(array('status' => 'active'));
 			?>
 			<div class="shb-recaptcha-notice" style="font-size: 12px; color: #666; margin-top: 10px; text-align: center;">
 				<?php esc_html_e('This site is protected by reCAPTCHA and the Google', 'simple-hall-booking-manager'); ?>
-				<a href="https://policies.google.com/privacy"
-					target="_blank"><?php esc_html_e('Privacy Policy', 'simple-hall-booking-manager'); ?></a>
+				<a href="https://policies.google.com/privacy" target="_blank">
+					<?php esc_html_e('Privacy Policy', 'simple-hall-booking-manager'); ?>
+				</a>
 				<?php esc_html_e('and', 'simple-hall-booking-manager'); ?>
-				<a href="https://policies.google.com/term
+				<a href="https://policies.google.com/terms" target="_blank">
+					<?php esc_html_e('Terms of Service', 'simple-hall-booking-manager'); ?>
+				</a>
+				<?php esc_html_e('apply.', 'simple-hall-booking-manager'); ?>
+			</div>
+		<?php endif; ?>
+	</form>
+</div>

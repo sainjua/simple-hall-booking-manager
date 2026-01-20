@@ -356,6 +356,7 @@ class SHB_AJAX
 		$customer_name = isset($_POST['customer_name']) ? sanitize_text_field(wp_unslash($_POST['customer_name'])) : '';
 		$customer_email = isset($_POST['customer_email']) ? sanitize_email(wp_unslash($_POST['customer_email'])) : '';
 		$customer_phone = isset($_POST['customer_phone']) ? sanitize_text_field(wp_unslash($_POST['customer_phone'])) : '';
+		$customer_organization = isset($_POST['customer_organization']) ? sanitize_text_field(wp_unslash($_POST['customer_organization'])) : '';
 		$event_purpose = isset($_POST['event_purpose']) ? sanitize_text_field(wp_unslash($_POST['event_purpose'])) : '';
 		$attendees_count = isset($_POST['attendees_count']) ? absint($_POST['attendees_count']) : 0;
 
@@ -587,6 +588,7 @@ class SHB_AJAX
 			'customer_name' => $customer_name,
 			'customer_email' => $customer_email,
 			'customer_phone' => $customer_phone,
+			'customer_organization' => $customer_organization,
 			'event_purpose' => $event_purpose,
 			'attendees_count' => $attendees_count,
 			'status' => 'pending',

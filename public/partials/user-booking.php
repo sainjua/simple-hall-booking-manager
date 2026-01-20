@@ -168,6 +168,16 @@ if (isset($_POST['shb_cancel_booking']) && wp_verify_nonce($_POST['shb_cancel_no
 						<span class="shb-value"><?php echo esc_html($booking->customer_phone); ?></span>
 					</div>
 				<?php endif; ?>
+				<?php if (!empty($booking->customer_organization)): ?>
+					<div class="shb-info-item">
+						<span class="shb-label">
+							<?php esc_html_e('Organization', 'simple-hall-booking-manager'); ?>
+						</span>
+						<span class="shb-value">
+							<?php echo esc_html($booking->customer_organization); ?>
+						</span>
+					</div>
+				<?php endif; ?>
 			</div>
 		</div>
 
