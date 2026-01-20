@@ -391,18 +391,14 @@ function shb_sort_link($id, $label, $current_orderby, $current_order)
 		<table class="shb-table">
 			<thead>
 				<tr>
-					<th><?php // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-					echo shb_sort_link('created_at', __('Created', 'simple-hall-booking-manager'), $orderby, $order); ?>
+					<th><?php echo wp_kses_post(shb_sort_link('created_at', __('Created', 'simple-hall-booking-manager'), $orderby, $order)); ?>
 					</th>
-					<th><?php // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-					echo shb_sort_link('booking_date', __('Date', 'simple-hall-booking-manager'), $orderby, $order); ?>
+					<th><?php echo wp_kses_post(shb_sort_link('booking_date', __('Date', 'simple-hall-booking-manager'), $orderby, $order)); ?>
 					</th>
-					<th><?php // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-					echo shb_sort_link('hall_id', __('Hall', 'simple-hall-booking-manager'), $orderby, $order); ?>
+					<th><?php echo wp_kses_post(shb_sort_link('hall_id', __('Hall', 'simple-hall-booking-manager'), $orderby, $order)); ?>
 					</th>
 					<th><?php esc_html_e('Slot', 'simple-hall-booking-manager'); ?></th>
-					<th><?php // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-					echo shb_sort_link('customer_name', __('Customer', 'simple-hall-booking-manager'), $orderby, $order); ?>
+					<th><?php echo wp_kses_post(shb_sort_link('customer_name', __('Customer', 'simple-hall-booking-manager'), $orderby, $order)); ?>
 					</th>
 					<th><?php esc_html_e('Status', 'simple-hall-booking-manager'); ?></th>
 					<th><?php esc_html_e('Actions', 'simple-hall-booking-manager'); ?></th>
