@@ -129,7 +129,7 @@ class SHB_Admin
 		);
 
 		// Enqueue FullCalendar for calendar page only
-		if ('toplevel_page_shb-calendar' === $hook) {
+		if (isset($_GET['page']) && 'shb-calendar' === $_GET['page']) {
 			// FullCalendar CSS (bundled locally)
 			wp_enqueue_style(
 				'fullcalendar',
