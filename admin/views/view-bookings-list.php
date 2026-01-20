@@ -126,7 +126,7 @@ function shb_sort_link($id, $label, $current_orderby, $current_order)
 		flex-wrap: wrap;
 		gap: 15px;
 	}
-	
+
 	.shb-filters-bar {
 		display: flex;
 		gap: 10px;
@@ -139,7 +139,7 @@ function shb_sort_link($id, $label, $current_orderby, $current_order)
 		gap: 5px;
 		list-style: none;
 	}
-	
+
 	.shb-status-nav li a {
 		text-decoration: none;
 		color: #5f6368;
@@ -167,10 +167,10 @@ function shb_sort_link($id, $label, $current_orderby, $current_order)
 		border-collapse: separate;
 		border-spacing: 0;
 		background: #fff;
+		/* box-shadow: 0 1px 2px rgba(60,64,67, 0.3); Removed per user request */
 		border: 1px solid #dadce0;
 		border-radius: 8px;
-		overflow: hidden;
-		box-shadow: 0 1px 2px rgba(60,64,67, 0.3);
+		/* keeping radius for now, but removing shadow */
 	}
 
 	.shb-table thead {
@@ -213,15 +213,41 @@ function shb_sort_link($id, $label, $current_orderby, $current_order)
 		font-weight: 500;
 		text-transform: capitalize;
 	}
-	.shb-status-pending { background-color: #fef7e0; color: #b06000; }
-	.shb-status-confirmed { background-color: #e6f4ea; color: #137333; }
-	.shb-status-cancelled { background-color: #fce8e6; color: #c5221f; }
-	
+
+	.shb-status-pending {
+		background-color: #fef7e0;
+		color: #b06000;
+	}
+
+	.shb-status-confirmed {
+		background-color: #e6f4ea;
+		color: #137333;
+	}
+
+	.shb-status-cancelled {
+		background-color: #fce8e6;
+		color: #c5221f;
+	}
+
 	/* Conflict Styles */
-	.shb-booking-conflict td { background-color: #fff8f8; }
-	.shb-table tr.shb-booking-conflict:hover td { background-color: #fff1f1; }
-	.shb-conflict-badge { font-size: 14px; margin-left: 5px; cursor: help; }
-	.shb-conflict-text { color: #d93025; font-weight: 500; }
+	.shb-booking-conflict td {
+		background-color: #fff8f8;
+	}
+
+	.shb-table tr.shb-booking-conflict:hover td {
+		background-color: #fff1f1;
+	}
+
+	.shb-conflict-badge {
+		font-size: 14px;
+		margin-left: 5px;
+		cursor: help;
+	}
+
+	.shb-conflict-text {
+		color: #d93025;
+		font-weight: 500;
+	}
 
 	/* Actions */
 	.shb-actions a {
@@ -230,8 +256,20 @@ function shb_sort_link($id, $label, $current_orderby, $current_order)
 		margin-right: 10px;
 		font-weight: 500;
 	}
-	.shb-title-name { display: block; font-weight: 500; color: #202124; font-size: 14px; }
-	.shb-sub-text { display: block; color: #70757a; font-size: 12px; margin-top: 2px; }
+
+	.shb-title-name {
+		display: block;
+		font-weight: 500;
+		color: #202124;
+		font-size: 14px;
+	}
+
+	.shb-sub-text {
+		display: block;
+		color: #70757a;
+		font-size: 12px;
+		margin-top: 2px;
+	}
 
 	/* Pagination */
 	.shb-pagination {
@@ -241,12 +279,14 @@ function shb_sort_link($id, $label, $current_orderby, $current_order)
 		color: #5f6368;
 		font-size: 13px;
 	}
+
 	.shb-pagination .page-numbers {
 		padding: 4px 8px;
 		text-decoration: none;
 		color: #5f6368;
 		border-radius: 4px;
 	}
+
 	.shb-pagination .page-numbers.current {
 		background-color: #e8f0fe;
 		color: #1967d2;
@@ -303,10 +343,14 @@ function shb_sort_link($id, $label, $current_orderby, $current_order)
 				if ($status_key !== 'all') {
 					$url_args['filter_status'] = $status_key;
 				}
-				if ($filter_hall_id) $url_args['filter_hall'] = $filter_hall_id;
-				if ($search_term) $url_args['s'] = $search_term;
-				if ($orderby) $url_args['orderby'] = $orderby;
-				if ($order) $url_args['order'] = $order;
+				if ($filter_hall_id)
+					$url_args['filter_hall'] = $filter_hall_id;
+				if ($search_term)
+					$url_args['s'] = $search_term;
+				if ($orderby)
+					$url_args['orderby'] = $orderby;
+				if ($order)
+					$url_args['order'] = $order;
 
 				$url = add_query_arg($url_args, admin_url('admin.php'));
 				echo "<li><a href='" . esc_url($url) . "' class='" . esc_attr($class) . "'>" . esc_html($status_label) . "</a></li>";
@@ -317,9 +361,12 @@ function shb_sort_link($id, $label, $current_orderby, $current_order)
 		<!-- Filters Form -->
 		<form method="get" action="" class="shb-filters-bar">
 			<input type="hidden" name="page" value="shb-bookings">
-			<?php if ($filter_status) echo '<input type="hidden" name="filter_status" value="' . esc_attr($filter_status) . '">'; ?>
-			<?php if ($orderby) echo '<input type="hidden" name="orderby" value="' . esc_attr($orderby) . '">'; ?>
-			<?php if ($order) echo '<input type="hidden" name="order" value="' . esc_attr($order) . '">'; ?>
+			<?php if ($filter_status)
+				echo '<input type="hidden" name="filter_status" value="' . esc_attr($filter_status) . '">'; ?>
+			<?php if ($orderby)
+				echo '<input type="hidden" name="orderby" value="' . esc_attr($orderby) . '">'; ?>
+			<?php if ($order)
+				echo '<input type="hidden" name="order" value="' . esc_attr($order) . '">'; ?>
 
 			<select name="filter_hall">
 				<option value=""><?php esc_html_e('All Halls', 'simple-hall-booking-manager'); ?></option>
@@ -330,7 +377,8 @@ function shb_sort_link($id, $label, $current_orderby, $current_order)
 				<?php endforeach; ?>
 			</select>
 
-			<input type="search" name="s" placeholder="<?php esc_attr_e('Search...', 'simple-hall-booking-manager'); ?>" value="<?php echo esc_attr($search_term); ?>">
+			<input type="search" name="s" placeholder="<?php esc_attr_e('Search...', 'simple-hall-booking-manager'); ?>"
+				value="<?php echo esc_attr($search_term); ?>">
 			<input type="submit" class="button" value="<?php esc_attr_e('Filter', 'simple-hall-booking-manager'); ?>">
 		</form>
 	</div>
@@ -343,11 +391,15 @@ function shb_sort_link($id, $label, $current_orderby, $current_order)
 		<table class="shb-table">
 			<thead>
 				<tr>
-					<th><?php echo shb_sort_link('created_at', __('Created', 'simple-hall-booking-manager'), $orderby, $order); ?></th>
-					<th><?php echo shb_sort_link('booking_date', __('Date', 'simple-hall-booking-manager'), $orderby, $order); ?></th>
-					<th><?php echo shb_sort_link('hall_id', __('Hall', 'simple-hall-booking-manager'), $orderby, $order); ?></th>
+					<th><?php echo shb_sort_link('created_at', __('Created', 'simple-hall-booking-manager'), $orderby, $order); ?>
+					</th>
+					<th><?php echo shb_sort_link('booking_date', __('Date', 'simple-hall-booking-manager'), $orderby, $order); ?>
+					</th>
+					<th><?php echo shb_sort_link('hall_id', __('Hall', 'simple-hall-booking-manager'), $orderby, $order); ?>
+					</th>
 					<th><?php esc_html_e('Slot', 'simple-hall-booking-manager'); ?></th>
-					<th><?php echo shb_sort_link('customer_name', __('Customer', 'simple-hall-booking-manager'), $orderby, $order); ?></th>
+					<th><?php echo shb_sort_link('customer_name', __('Customer', 'simple-hall-booking-manager'), $orderby, $order); ?>
+					</th>
 					<th><?php esc_html_e('Status', 'simple-hall-booking-manager'); ?></th>
 					<th><?php esc_html_e('Actions', 'simple-hall-booking-manager'); ?></th>
 				</tr>
@@ -395,23 +447,26 @@ function shb_sort_link($id, $label, $current_orderby, $current_order)
 					?>
 					<tr <?php echo $has_conflicts ? 'class="shb-booking-conflict"' : ''; ?>>
 						<td>
-							<?php 
-								// display "2 hours ago" etc
-								echo esc_html(human_time_diff(strtotime($booking->created_at), current_time('timestamp'))) . ' ' . esc_html__('ago', 'simple-hall-booking-manager'); 
+							<?php
+							// display "2 hours ago" etc
+							echo esc_html(human_time_diff(strtotime($booking->created_at), current_time('timestamp'))) . ' ' . esc_html__('ago', 'simple-hall-booking-manager');
 							?>
 						</td>
 						<td>
 							<?php echo wp_kses_post($date_display); ?>
 							<?php if ($has_conflicts): ?>
-								<span class="shb-conflict-badge" title="<?php echo esc_attr(sprintf(_n('%d conflict', '%d conflicts', $conflict_count, 'simple-hall-booking-manager'), $conflict_count)); ?>">⚠️</span>
+								<span class="shb-conflict-badge"
+									title="<?php echo esc_attr(sprintf(_n('%d conflict', '%d conflicts', $conflict_count, 'simple-hall-booking-manager'), $conflict_count)); ?>">⚠️</span>
 							<?php endif; ?>
 						</td>
 						<td><?php echo $hall ? esc_html($hall->title) : '-'; ?></td>
 						<td><?php echo $slot ? esc_html($slot->label) : '-'; ?></td>
 						<td>
 							<span class="shb-title-name"><?php echo esc_html($booking->customer_name); ?></span>
-							<span class="shb-sub-text"><?php echo esc_html($booking->customer_organization ? $booking->customer_organization : $booking->customer_email); ?></span>
-							<span class="shb-sub-text" style="font-family: monospace;">PIN: <?php echo esc_html($booking->pin); ?></span>
+							<span
+								class="shb-sub-text"><?php echo esc_html($booking->customer_organization ? $booking->customer_organization : $booking->customer_email); ?></span>
+							<span class="shb-sub-text" style="font-family: monospace;">PIN:
+								<?php echo esc_html($booking->pin); ?></span>
 						</td>
 						<td>
 							<span class="shb-status-badge shb-status-<?php echo esc_attr($booking->status); ?>">
@@ -424,12 +479,13 @@ function shb_sort_link($id, $label, $current_orderby, $current_order)
 							<?php endif; ?>
 						</td>
 						<td class="shb-actions">
-							<a href="<?php echo esc_url(admin_url('admin.php?page=shb-bookings&action=edit&id=' . $booking->id)); ?>">
+							<a
+								href="<?php echo esc_url(admin_url('admin.php?page=shb-bookings&action=edit&id=' . $booking->id)); ?>">
 								<?php esc_html_e('Edit', 'simple-hall-booking-manager'); ?>
 							</a>
 							<a href="<?php echo esc_url(wp_nonce_url(admin_url('admin.php?page=shb-bookings&action=delete_booking&id=' . $booking->id), 'shb_delete_booking_' . $booking->id)); ?>"
-							   style="color: #c5221f;"
-							   onclick="return confirm('<?php esc_attr_e('Are you sure you want to delete this booking?', 'simple-hall-booking-manager'); ?>');">
+								style="color: #c5221f;"
+								onclick="return confirm('<?php esc_attr_e('Are you sure you want to delete this booking?', 'simple-hall-booking-manager'); ?>');">
 								<?php esc_html_e('Delete', 'simple-hall-booking-manager'); ?>
 							</a>
 						</td>
@@ -450,7 +506,8 @@ function shb_sort_link($id, $label, $current_orderby, $current_order)
 					'current' => $current_page,
 					'type' => 'plain',
 				));
-				if ($page_links) echo $page_links;
+				if ($page_links)
+					echo $page_links;
 				?>
 			</div>
 		<?php endif; ?>
