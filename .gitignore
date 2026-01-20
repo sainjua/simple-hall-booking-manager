@@ -30,3 +30,4 @@ node_modules/
 # Temporary files
 *.log
 *.tmp
+shb_sql_log.txt
