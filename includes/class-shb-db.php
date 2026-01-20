@@ -215,7 +215,7 @@ class SHB_DB
 	/**
 	 * Check and run database migrations
 	 */
-	private function check_and_run_migrations()
+	public function check_and_run_migrations()
 	{
 		$db_version = get_option('shb_db_version', '1.0.0');
 
@@ -241,6 +241,12 @@ class SHB_DB
 		if (version_compare($db_version, '1.4.0', '<')) {
 			$this->migrate_to_v140();
 			update_option('shb_db_version', '1.4.0');
+		}
+
+		// Force check for v1.4.1 (ensure customer_organization exists if 1.4.0 failed)
+		if (version_compare($db_version, '1.4.1', '<')) {
+			$this->migrate_to_v140();
+			update_option('shb_db_version', '1.4.1');
 		}
 	}
 
@@ -1085,12 +1091,13 @@ class SHB_DB
 
 		// Build query with or without JOIN
 		if ($needs_join) {
-			// When joining, we might get duplicate rows for multi-day bookings
-			// Use DISTINCT to avoid duplicates
-			$sql = "SELECT DISTINCT b.* 
+			// Use INNER JOIN when filtering by date/slot since we require matches
+			// GROUP BY b.id ensures we get unique bookings even if they match multiple dates
+			$sql = "SELECT b.* 
 					FROM {$table_bookings} b
-					LEFT JOIN {$table_booking_dates} d ON b.id = d.booking_id
+					INNER JOIN {$table_booking_dates} d ON b.id = d.booking_id
 					WHERE {$where_sql} 
+					GROUP BY b.id
 					ORDER BY {$order_by} 
 					{$limit_sql}";
 		} else {
@@ -1418,6 +1425,44 @@ class SHB_DB
 
 		// Merge both arrays
 		return array_merge((array) $single_bookings, (array) $multiday_bookings);
+	}
+
+	/**
+	 * Get all booked dates for a hall within a range
+	 *
+	 * @param int    $hall_id    Hall ID.
+	 * @param string $start_date Start date (Y-m-d).
+	 * @param string $end_date   End date (Y-m-d).
+	 * @return array Array of objects containing booking_date, slot_id, booking_id, customer_name, status.
+	 */
+	public function get_hall_booked_dates($hall_id, $start_date, $end_date)
+	{
+		$table_bookings = $this->get_table_bookings();
+		$table_dates = $this->get_table_booking_dates();
+		$table_slots = $this->get_table_slots();
+
+		$sql = "SELECT d.booking_date, d.slot_id, b.id as booking_id, b.customer_name, b.status, b.hall_id,
+				       s.label as slot_label, s.start_time, s.end_time
+				FROM {$table_dates} d
+				JOIN {$table_bookings} b ON d.booking_id = b.id
+				LEFT JOIN {$table_slots} s ON d.slot_id = s.id
+				WHERE 1=1";
+
+		$params = array();
+
+		if (!empty($hall_id)) {
+			$sql .= " AND b.hall_id = %d";
+			$params[] = $hall_id;
+		}
+
+		$sql .= " AND d.booking_date >= %s AND d.booking_date <= %s ORDER BY d.booking_date ASC";
+		$params[] = $start_date;
+		$params[] = $end_date;
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		return $this->wpdb->get_results(
+			$this->wpdb->prepare($sql, $params)
+		);
 	}
 
 	// ============================================================
