@@ -265,18 +265,18 @@ if ('pending' === $booking->status) {
 	.shb-access-box {
 		background: #f8fafc;
 		border-radius: 6px;
-		padding: 24px;
+		padding: 16px;
 		text-align: center;
 		border: 1px solid #e2e8f0;
 	}
 
 	.shb-pin {
 		font-family: 'SF Mono', 'Roboto Mono', 'Courier New', monospace;
-		font-size: 32px;
+		font-size: 24px;
 		font-weight: 700;
 		color: #334155;
-		letter-spacing: 3px;
-		margin: 12px 0;
+		letter-spacing: 2px;
+		margin: 8px 0;
 		display: block;
 	}
 
@@ -439,7 +439,8 @@ if ('pending' === $booking->status) {
 			<span class="dashicons dashicons-warning shb-conflict-icon"></span>
 			<div>
 				<h4 style="margin: 0 0 4px 0; color: #9a3412; font-size: 14px; font-weight: 600;">
-					<?php esc_html_e('Scheduling Conflicts Detected', 'simple-hall-booking-manager'); ?></h4>
+					<?php esc_html_e('Scheduling Conflicts Detected', 'simple-hall-booking-manager'); ?>
+				</h4>
 				<p style="margin: 0; color: #7c2d12; font-size: 13px; line-height: 1.5;">
 					<?php printf(esc_html__('This booking conflicts with %d potentially pending booking(s). Approving will automatically cancel overlapping pending requests.', 'simple-hall-booking-manager'), count($conflicts)); ?>
 				</p>
@@ -516,11 +517,14 @@ if ('pending' === $booking->status) {
 								<thead>
 									<tr>
 										<th style="font-weight:600; color:#6b7280; font-size:12px;">
-											<?php esc_html_e('Date', 'simple-hall-booking-manager'); ?></th>
+											<?php esc_html_e('Date', 'simple-hall-booking-manager'); ?>
+										</th>
 										<th style="font-weight:600; color:#6b7280; font-size:12px;">
-											<?php esc_html_e('Day', 'simple-hall-booking-manager'); ?></th>
+											<?php esc_html_e('Day', 'simple-hall-booking-manager'); ?>
+										</th>
 										<th style="font-weight:600; color:#6b7280; font-size:12px;">
-											<?php esc_html_e('Time Slot', 'simple-hall-booking-manager'); ?></th>
+											<?php esc_html_e('Time Slot', 'simple-hall-booking-manager'); ?>
+										</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -530,8 +534,10 @@ if ('pending' === $booking->status) {
 										<tr>
 											<td><strong><?php echo esc_html(shb_format_date($date_record->booking_date)); ?></strong>
 											</td>
-											<td><?php echo esc_html(wp_date('l', strtotime($date_record->booking_date))); ?></td>
-											<td><?php echo $d_slot ? esc_html($d_slot->label . ' (' . wp_date('g:i A', strtotime($d_slot->start_time)) . ' - ' . wp_date('g:i A', strtotime($d_slot->end_time)) . ')') : '-'; ?></td>
+											<td><?php echo esc_html(wp_date('l', strtotime($date_record->booking_date))); ?>
+											</td>
+											<td><?php echo $d_slot ? esc_html($d_slot->label . ' (' . wp_date('g:i A', strtotime($d_slot->start_time)) . ' - ' . wp_date('g:i A', strtotime($d_slot->end_time)) . ')') : '-'; ?>
+											</td>
 										</tr>
 									<?php endforeach; ?>
 								</tbody>
