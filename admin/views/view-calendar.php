@@ -249,18 +249,31 @@ if (true) {
 
 	/* Legend */
 	.shb-legend {
+		display: flex;
+		align-items: center;
+		justify-content: flex-start;
 		background: transparent;
 		border: none;
 		padding: 0;
-		margin-bottom: 20px;
+		margin-bottom: 24px;
 		gap: 24px;
 	}
 
 	.shb-legend-item {
+		display: flex;
+		align-items: center;
+		gap: 8px;
 		font-family: inherit;
 		font-weight: 500;
 		color: #3c4043;
 		font-size: 14px;
+	}
+
+	.shb-dot {
+		width: 12px;
+		height: 12px;
+		border-radius: 50%;
+		display: inline-block;
 	}
 
 	/* Print Styles Start Here */
