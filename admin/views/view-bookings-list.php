@@ -26,9 +26,26 @@ $filter_hall_id = isset($_GET['filter_hall']) ? absint($_GET['filter_hall']) : '
 // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- Read‑only search GET
 $search_term = isset($_GET['s']) ? sanitize_text_field(wp_unslash($_GET['s'])) : '';
 
+// Handle Sorting
+// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read‑only sort GET
+$orderby = isset($_GET['orderby']) ? sanitize_key($_GET['orderby']) : 'created_at';
+// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read‑only sort GET
+$order = isset($_GET['order']) ? strtoupper(sanitize_text_field($_GET['order'])) : 'DESC';
+
+// Whitelist orderby
+$allowed_orderby = array('created_at', 'booking_date', 'customer_name', 'status', 'hall_id');
+if (!in_array($orderby, $allowed_orderby, true)) {
+	$orderby = 'created_at';
+}
+if (!in_array($order, array('ASC', 'DESC'), true)) {
+	$order = 'DESC';
+}
+
 $filters = array(
 	'limit' => $per_page,
 	'offset' => $offset,
+	'orderby' => $orderby,
+	'order' => $order,
 );
 
 if ($filter_status) {
@@ -70,21 +87,175 @@ $status_links = array(
 // Handle messages
 // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- Read‑only message GET
 $message = isset($_GET['message']) ? sanitize_text_field(wp_unslash($_GET['message'])) : '';
+
+/**
+ * Helper to generate sortable column link
+ */
+function shb_sort_link($id, $label, $current_orderby, $current_order)
+{
+	$new_order = ($current_orderby === $id && $current_order === 'DESC') ? 'ASC' : 'DESC';
+	$arrow = '';
+	if ($current_orderby === $id) {
+		$arrow = ($current_order === 'ASC') ? ' &uarr;' : ' &darr;';
+	}
+	$url = add_query_arg(array('orderby' => $id, 'order' => $new_order));
+	return '<a href="' . esc_url($url) . '" style="color: inherit; text-decoration: none;">' . esc_html($label) . $arrow . '</a>';
+}
 ?>
 
-<div class="wrap">
+<style>
+	/* Container */
+	.shb-bookings-list-wrap {
+		font-family: 'Roboto', "Helvetica Neue", Helvetica, Arial, sans-serif;
+		max-width: 1200px;
+		margin: 20px 0;
+	}
+
+	.shb-bookings-list-wrap h1 {
+		font-weight: 400;
+		color: #202124;
+		margin-bottom: 20px;
+	}
+
+	/* Controls Grid */
+	.shb-controls {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 15px;
+		flex-wrap: wrap;
+		gap: 15px;
+	}
+	
+	.shb-filters-bar {
+		display: flex;
+		gap: 10px;
+		align-items: center;
+	}
+
+	.shb-status-nav {
+		margin: 0;
+		display: flex;
+		gap: 5px;
+		list-style: none;
+	}
+	
+	.shb-status-nav li a {
+		text-decoration: none;
+		color: #5f6368;
+		padding: 5px 10px;
+		border-radius: 4px;
+		font-size: 13px;
+		font-weight: 500;
+		transition: background 0.2s;
+	}
+
+	.shb-status-nav li a:hover {
+		background-color: #f1f3f4;
+		color: #202124;
+	}
+
+	.shb-status-nav li a.current {
+		background-color: #e8f0fe;
+		color: #1967d2;
+		font-weight: 600;
+	}
+
+	/* Table Design */
+	.shb-table {
+		width: 100%;
+		border-collapse: separate;
+		border-spacing: 0;
+		background: #fff;
+		border: 1px solid #dadce0;
+		border-radius: 8px;
+		overflow: hidden;
+		box-shadow: 0 1px 2px rgba(60,64,67, 0.3);
+	}
+
+	.shb-table thead {
+		background-color: #f8f9fa;
+	}
+
+	.shb-table th {
+		padding: 12px 16px;
+		text-align: left;
+		font-size: 13px;
+		font-weight: 600;
+		color: #5f6368;
+		border-bottom: 1px solid #dadce0;
+		user-select: none;
+	}
+
+	.shb-table td {
+		padding: 12px 16px;
+		border-bottom: 1px solid #f1f3f4;
+		color: #3c4043;
+		font-size: 14px;
+		vertical-align: middle;
+	}
+
+	.shb-table tr:last-child td {
+		border-bottom: none;
+	}
+
+	.shb-table tr:hover td {
+		background-color: #f8f9fa;
+	}
+
+	/* Badges */
+	.shb-status-badge {
+		display: inline-flex;
+		align-items: center;
+		padding: 4px 8px;
+		border-radius: 4px;
+		font-size: 12px;
+		font-weight: 500;
+		text-transform: capitalize;
+	}
+	.shb-status-pending { background-color: #fef7e0; color: #b06000; }
+	.shb-status-confirmed { background-color: #e6f4ea; color: #137333; }
+	.shb-status-cancelled { background-color: #fce8e6; color: #c5221f; }
+	
+	/* Conflict Styles */
+	.shb-booking-conflict td { background-color: #fff8f8; }
+	.shb-table tr.shb-booking-conflict:hover td { background-color: #fff1f1; }
+	.shb-conflict-badge { font-size: 14px; margin-left: 5px; cursor: help; }
+	.shb-conflict-text { color: #d93025; font-weight: 500; }
+
+	/* Actions */
+	.shb-actions a {
+		text-decoration: none;
+		font-size: 13px;
+		margin-right: 10px;
+		font-weight: 500;
+	}
+	.shb-title-name { display: block; font-weight: 500; color: #202124; font-size: 14px; }
+	.shb-sub-text { display: block; color: #70757a; font-size: 12px; margin-top: 2px; }
+
+	/* Pagination */
+	.shb-pagination {
+		display: flex;
+		justify-content: flex-end;
+		margin-top: 15px;
+		color: #5f6368;
+		font-size: 13px;
+	}
+	.shb-pagination .page-numbers {
+		padding: 4px 8px;
+		text-decoration: none;
+		color: #5f6368;
+		border-radius: 4px;
+	}
+	.shb-pagination .page-numbers.current {
+		background-color: #e8f0fe;
+		color: #1967d2;
+		font-weight: bold;
+	}
+</style>
+
+<div class="wrap shb-bookings-list-wrap">
 	<h1 class="wp-heading-inline"><?php esc_html_e('Bookings', 'simple-hall-booking-manager'); ?></h1>
-
-	<?php if ($search_term): ?>
-		<span class="subtitle">
-			<?php
-			/* translators: %s: search term */
-			printf(esc_html__('Search results for: %s', 'simple-hall-booking-manager'), '<strong>' . esc_html($search_term) . '</strong>');
-			?>
-		</span>
-	<?php endif; ?>
-
-	<hr class="wp-header-end">
 
 	<?php if ($message): ?>
 		<?php
@@ -93,16 +264,15 @@ $message = isset($_GET['message']) ? sanitize_text_field(wp_unslash($_GET['messa
 		$base_message = $message_parts[0];
 		$cancelled_count = isset($message_parts[1]) ? absint($message_parts[1]) : 0;
 		?>
-		<div class="notice notice-success is-dismissible">
+		<div class="notice notice-success is-dismissible inline">
 			<p>
 				<?php
 				switch ($base_message) {
 					case 'booking_updated':
 						esc_html_e('Booking updated successfully.', 'simple-hall-booking-manager');
 						if ($cancelled_count > 0) {
-							echo ' ';
 							/* translators: %d: number of cancelled bookings */
-							printf(esc_html__('%d conflicting booking(s) were automatically cancelled.', 'simple-hall-booking-manager'), absint($cancelled_count));
+							echo ' ' . sprintf(esc_html__('%d conflicting booking(s) were automatically cancelled.', 'simple-hall-booking-manager'), absint($cancelled_count));
 						}
 						break;
 					case 'booking_deleted':
@@ -116,91 +286,68 @@ $message = isset($_GET['message']) ? sanitize_text_field(wp_unslash($_GET['messa
 		</div>
 	<?php endif; ?>
 
-	<!-- Status Links -->
-	<ul class="subsubsub">
-		<?php
-		$total_statuses = count($status_links);
-		$i = 0;
-		foreach ($status_links as $status_key => $status_label) {
-			$i++;
-			$class = '';
-			if ($status_key === 'all' && empty($filter_status)) {
-				$class = 'current';
-			} elseif ($status_key === $filter_status) {
-				$class = 'current';
+	<!-- Upper Controls -->
+	<div class="shb-controls">
+		<!-- Status Filter Tabs -->
+		<ul class="shb-status-nav">
+			<?php
+			foreach ($status_links as $status_key => $status_label) {
+				$class = '';
+				if ($status_key === 'all' && empty($filter_status)) {
+					$class = 'current';
+				} elseif ($status_key === $filter_status) {
+					$class = 'current';
+				}
+
+				$url_args = array('page' => 'shb-bookings');
+				if ($status_key !== 'all') {
+					$url_args['filter_status'] = $status_key;
+				}
+				if ($filter_hall_id) $url_args['filter_hall'] = $filter_hall_id;
+				if ($search_term) $url_args['s'] = $search_term;
+				if ($orderby) $url_args['orderby'] = $orderby;
+				if ($order) $url_args['order'] = $order;
+
+				$url = add_query_arg($url_args, admin_url('admin.php'));
+				echo "<li><a href='" . esc_url($url) . "' class='" . esc_attr($class) . "'>" . esc_html($status_label) . "</a></li>";
 			}
+			?>
+		</ul>
 
-			$url_args = array(
-				'page' => 'shb-bookings',
-			);
-
-			if ($status_key !== 'all') {
-				$url_args['filter_status'] = $status_key;
-			}
-
-			if ($filter_hall_id) {
-				$url_args['filter_hall'] = $filter_hall_id;
-			}
-
-			if ($search_term) {
-				$url_args['s'] = $search_term;
-			}
-
-			$url = add_query_arg($url_args, admin_url('admin.php'));
-			$separator = ($i < $total_statuses) ? ' |' : '';
-
-			echo "<li><a href='" . esc_url($url) . "' class='" . esc_attr($class) . "'>" . esc_html($status_label) . "</a>" . esc_html($separator) . " </li>";
-		}
-		?>
-	</ul>
-
-	<!-- Filters & Search -->
-	<div class="tablenav top">
-		<form method="get" action="">
+		<!-- Filters Form -->
+		<form method="get" action="" class="shb-filters-bar">
 			<input type="hidden" name="page" value="shb-bookings">
-			<?php if ($filter_status): ?>
-				<input type="hidden" name="filter_status" value="<?php echo esc_attr($filter_status); ?>">
-			<?php endif; ?>
+			<?php if ($filter_status) echo '<input type="hidden" name="filter_status" value="' . esc_attr($filter_status) . '">'; ?>
+			<?php if ($orderby) echo '<input type="hidden" name="orderby" value="' . esc_attr($orderby) . '">'; ?>
+			<?php if ($order) echo '<input type="hidden" name="order" value="' . esc_attr($order) . '">'; ?>
 
-			<div class="alignleft actions">
-				<select name="filter_hall">
-					<option value=""><?php esc_html_e('All Halls', 'simple-hall-booking-manager'); ?></option>
-					<?php foreach ($halls as $hall): ?>
-						<option value="<?php echo esc_attr($hall->id); ?>" <?php selected($filter_hall_id, $hall->id); ?>>
-							<?php echo esc_html($hall->title); ?>
-						</option>
-					<?php endforeach; ?>
-				</select>
+			<select name="filter_hall">
+				<option value=""><?php esc_html_e('All Halls', 'simple-hall-booking-manager'); ?></option>
+				<?php foreach ($halls as $hall): ?>
+					<option value="<?php echo esc_attr($hall->id); ?>" <?php selected($filter_hall_id, $hall->id); ?>>
+						<?php echo esc_html($hall->title); ?>
+					</option>
+				<?php endforeach; ?>
+			</select>
 
-				<input type="submit" class="button"
-					value="<?php esc_attr_e('Filter', 'simple-hall-booking-manager'); ?>">
-			</div>
-
-			<div class="alignright">
-				<p class="search-box">
-					<label class="screen-reader-text"
-						for="post-search-input"><?php esc_html_e('Search Bookings:', 'simple-hall-booking-manager'); ?></label>
-					<input type="search" id="post-search-input" name="s" value="<?php echo esc_attr($search_term); ?>">
-					<input type="submit" id="search-submit" class="button"
-						value="<?php esc_attr_e('Search Bookings', 'simple-hall-booking-manager'); ?>">
-				</p>
-			</div>
+			<input type="search" name="s" placeholder="<?php esc_attr_e('Search...', 'simple-hall-booking-manager'); ?>" value="<?php echo esc_attr($search_term); ?>">
+			<input type="submit" class="button" value="<?php esc_attr_e('Filter', 'simple-hall-booking-manager'); ?>">
 		</form>
 	</div>
 
 	<?php if (empty($bookings)): ?>
-		<div class="notice notice-info">
+		<div class="notice notice-info inline" style="margin: 0;">
 			<p><?php esc_html_e('No bookings found.', 'simple-hall-booking-manager'); ?></p>
 		</div>
 	<?php else: ?>
-		<table class="wp-list-table widefat fixed striped">
+		<table class="shb-table">
 			<thead>
 				<tr>
-					<th><?php esc_html_e('Date', 'simple-hall-booking-manager'); ?></th>
-					<th><?php esc_html_e('Hall', 'simple-hall-booking-manager'); ?></th>
+					<th><?php echo shb_sort_link('created_at', __('Created', 'simple-hall-booking-manager'), $orderby, $order); ?></th>
+					<th><?php echo shb_sort_link('booking_date', __('Date', 'simple-hall-booking-manager'), $orderby, $order); ?></th>
+					<th><?php echo shb_sort_link('hall_id', __('Hall', 'simple-hall-booking-manager'), $orderby, $order); ?></th>
 					<th><?php esc_html_e('Slot', 'simple-hall-booking-manager'); ?></th>
-					<th><?php esc_html_e('Customer', 'simple-hall-booking-manager'); ?></th>
-					<th><?php esc_html_e('PIN', 'simple-hall-booking-manager'); ?></th>
+					<th><?php echo shb_sort_link('customer_name', __('Customer', 'simple-hall-booking-manager'), $orderby, $order); ?></th>
 					<th><?php esc_html_e('Status', 'simple-hall-booking-manager'); ?></th>
 					<th><?php esc_html_e('Actions', 'simple-hall-booking-manager'); ?></th>
 				</tr>
@@ -210,13 +357,13 @@ $message = isset($_GET['message']) ? sanitize_text_field(wp_unslash($_GET['messa
 					<?php
 					$hall = $db->get_hall($booking->hall_id);
 
-					// Get booking dates (works for both single and multi-day bookings)
+					// Get booking dates
 					$booking_dates = $db->get_booking_dates($booking->id);
 					$is_multiday = ('multiday' === $booking->booking_type);
 					$date_display = '';
 					$date_count = count($booking_dates);
 
-					// Get first slot for display (single-day has 1 slot, multi-day may have multiple)
+					// Get first slot
 					$slot = null;
 					if (!empty($booking_dates)) {
 						$first_booking_date = reset($booking_dates);
@@ -230,19 +377,13 @@ $message = isset($_GET['message']) ? sanitize_text_field(wp_unslash($_GET['messa
 						if ($first_date !== $last_date) {
 							$date_display .= ' - ' . shb_format_date($last_date);
 						}
-						$date_display .= '<br><small>' . sprintf(
-							/* translators: %d: number of days */
-							_n('%d day', '%d days', $date_count, 'simple-hall-booking-manager'),
-							$date_count
-						) . '</small>';
+						$date_display .= '<br><span class="shb-sub-text">' . sprintf(_n('%d day', '%d days', $date_count, 'simple-hall-booking-manager'), $date_count) . '</span>';
 					} elseif (!empty($booking_dates)) {
-						// Single-day booking
 						$date_display = shb_format_date($booking_dates[0]->booking_date);
 					} else {
 						$date_display = '-';
 					}
-					?>
-					<?php
+
 					// Check for conflicts
 					$has_conflicts = false;
 					$conflict_count = 0;
@@ -254,48 +395,41 @@ $message = isset($_GET['message']) ? sanitize_text_field(wp_unslash($_GET['messa
 					?>
 					<tr <?php echo $has_conflicts ? 'class="shb-booking-conflict"' : ''; ?>>
 						<td>
+							<?php 
+								// display "2 hours ago" etc
+								echo esc_html(human_time_diff(strtotime($booking->created_at), current_time('timestamp'))) . ' ' . esc_html__('ago', 'simple-hall-booking-manager'); 
+							?>
+						</td>
+						<td>
 							<?php echo wp_kses_post($date_display); ?>
 							<?php if ($has_conflicts): ?>
-								<br><span class="shb-conflict-badge" title="<?php echo esc_attr(sprintf(
-									/* translators: %d: number of conflicts */
-									_n('%d conflict', '%d conflicts', $conflict_count, 'simple-hall-booking-manager'),
-									$conflict_count
-								)); ?>">⚠️</span>
+								<span class="shb-conflict-badge" title="<?php echo esc_attr(sprintf(_n('%d conflict', '%d conflicts', $conflict_count, 'simple-hall-booking-manager'), $conflict_count)); ?>">⚠️</span>
 							<?php endif; ?>
 						</td>
 						<td><?php echo $hall ? esc_html($hall->title) : '-'; ?></td>
 						<td><?php echo $slot ? esc_html($slot->label) : '-'; ?></td>
 						<td>
-							<strong><?php echo esc_html($booking->customer_name); ?></strong><br>
-							<small><?php echo esc_html($booking->customer_email); ?></small>
-						</td>
-						<td>
-							<code style="font-weight: bold; letter-spacing: 1px;">
-																<?php echo esc_html($booking->pin); ?>
-															</code>
+							<span class="shb-title-name"><?php echo esc_html($booking->customer_name); ?></span>
+							<span class="shb-sub-text"><?php echo esc_html($booking->customer_organization ? $booking->customer_organization : $booking->customer_email); ?></span>
+							<span class="shb-sub-text" style="font-family: monospace;">PIN: <?php echo esc_html($booking->pin); ?></span>
 						</td>
 						<td>
 							<span class="shb-status-badge shb-status-<?php echo esc_attr($booking->status); ?>">
 								<?php echo esc_html(shb_get_status_label($booking->status)); ?>
 							</span>
 							<?php if ($has_conflicts): ?>
-								<br><small class="shb-conflict-text">
-									<?php
-									/* translators: %d: number of conflicts */
-									printf(esc_html__('⚠️ %d conflict(s)', 'simple-hall-booking-manager'), absint($conflict_count));
-									?>
-								</small>
+								<div class="shb-conflict-text" style="font-size: 11px; margin-top: 4px;">
+									<?php printf(esc_html__('%d conflict(s)', 'simple-hall-booking-manager'), absint($conflict_count)); ?>
+								</div>
 							<?php endif; ?>
 						</td>
-						<td>
-							<a
-								href="<?php echo esc_url(admin_url('admin.php?page=shb-bookings&action=edit&id=' . $booking->id)); ?>">
+						<td class="shb-actions">
+							<a href="<?php echo esc_url(admin_url('admin.php?page=shb-bookings&action=edit&id=' . $booking->id)); ?>">
 								<?php esc_html_e('Edit', 'simple-hall-booking-manager'); ?>
 							</a>
-							|
 							<a href="<?php echo esc_url(wp_nonce_url(admin_url('admin.php?page=shb-bookings&action=delete_booking&id=' . $booking->id), 'shb_delete_booking_' . $booking->id)); ?>"
-								class="delete-link"
-								onclick="return confirm('<?php esc_attr_e('Are you sure you want to delete this booking?', 'simple-hall-booking-manager'); ?>');">
+							   style="color: #c5221f;"
+							   onclick="return confirm('<?php esc_attr_e('Are you sure you want to delete this booking?', 'simple-hall-booking-manager'); ?>');">
 								<?php esc_html_e('Delete', 'simple-hall-booking-manager'); ?>
 							</a>
 						</td>
@@ -305,34 +439,21 @@ $message = isset($_GET['message']) ? sanitize_text_field(wp_unslash($_GET['messa
 		</table>
 
 		<?php if ($total_pages > 1): ?>
-			<div class="tablenav bottom">
-				<div class="tablenav-pages">
-					<span class="displaying-num">
-						<?php
-						/* translators: %s: number of items */
-						echo esc_html(sprintf(_n('%s item', '%s items', $total_bookings, 'simple-hall-booking-manager'), number_format_i18n($total_bookings)));
-						?>
-					</span>
-					<?php
-					$page_links = paginate_links(
-						array(
-							'base' => add_query_arg('paged', '%#%'),
-							'format' => '',
-							'prev_text' => __('&laquo;', 'simple-hall-booking-manager'),
-							'next_text' => __('&raquo;', 'simple-hall-booking-manager'),
-							'total' => $total_pages,
-							'current' => $current_page,
-							'type' => 'plain',
-						)
-					);
-
-					if ($page_links) {
-						// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- paginate_links() output is safe
-						echo '<span class="pagination-links">' . $page_links . '</span>';
-					}
-					?>
-				</div>
+			<div class="shb-pagination">
+				<?php
+				$page_links = paginate_links(array(
+					'base' => add_query_arg('paged', '%#%'),
+					'format' => '',
+					'prev_text' => __('&laquo;', 'simple-hall-booking-manager'),
+					'next_text' => __('&raquo;', 'simple-hall-booking-manager'),
+					'total' => $total_pages,
+					'current' => $current_page,
+					'type' => 'plain',
+				));
+				if ($page_links) echo $page_links;
+				?>
 			</div>
 		<?php endif; ?>
+
 	<?php endif; ?>
 </div>
