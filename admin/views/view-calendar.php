@@ -114,71 +114,156 @@ if (true) {
 	}
 
 	/* FullCalendar Overrides */
+	/* FullCalendar Overrides - Google Calendar Style */
+	.fc {
+		font-family: "Roboto", "HelveticaNeue", "Helvetica", "Arial", sans-serif;
+	}
+
 	.fc-toolbar-title {
-		font-size: 1.5em !important;
-		font-weight: 600;
-		color: #1d2327;
+		font-size: 22px !important;
+		font-weight: 400 !important;
+		color: #3c4043;
 	}
 
-	.fc-button-primary {
-		background-color: #2271b1 !important;
-		border-color: #2271b1 !important;
-		text-transform: capitalize;
-		font-weight: 500;
-		transition: all 0.2s;
+	/* Buttons (Navigation & Views) */
+	.fc-button {
+		background-color: transparent !important;
+		border: 1px solid #dadce0 !important;
+		color: #3c4043 !important;
+		font-weight: 500 !important;
+		font-size: 14px !important;
+		padding: 7px 16px !important;
+		border-radius: 4px !important;
+		box-shadow: none !important;
+		text-transform: none !important;
+		transition: background-color 0.2s, box-shadow 0.2s !important;
 	}
 
-	.fc-button-primary:hover {
-		background-color: #135e96 !important;
-		border-color: #135e96 !important;
+	.fc-button:hover {
+		background-color: #f1f3f4 !important;
+		border-color: #dadce0 !important;
+		color: #3c4043 !important;
 	}
 
 	.fc-button-active {
-		background-color: #135e96 !important;
-		border-color: #135e96 !important;
+		background-color: #e8f0fe !important;
+		color: #1967d2 !important;
+		border-color: #e8f0fe !important;
 	}
 
+	.fc-button-primary:not(:disabled).fc-button-active:focus,
+	.fc-button-primary:not(:disabled):active:focus {
+		box-shadow: none !important;
+	}
+
+	/* Button Groups */
+	.fc-button-group>.fc-button {
+		border-radius: 0 !important;
+		margin: 0 !important;
+	}
+
+	.fc-button-group>.fc-button:first-child {
+		border-top-left-radius: 4px !important;
+		border-bottom-left-radius: 4px !important;
+	}
+
+	.fc-button-group>.fc-button:last-child {
+		border-top-right-radius: 4px !important;
+		border-bottom-right-radius: 4px !important;
+	}
+
+	/* Grid & Headers */
+	.fc-col-header-cell-cushion {
+		text-transform: uppercase;
+		font-size: 11px;
+		font-weight: 500;
+		color: #70757a;
+		padding: 10px 0 !important;
+		text-decoration: none !important;
+	}
+
+	.fc-scrollgrid {
+		border: 1px solid #dadce0 !important;
+		border-radius: 8px;
+		overflow: hidden;
+	}
+
+	.fc-theme-standard td,
+	.fc-theme-standard th {
+		border-color: #dadce0 !important;
+	}
+
+	/* Day Numbers */
+	.fc-daygrid-day-top {
+		justify-content: center !important;
+		padding-top: 4px;
+	}
+
+	.fc-daygrid-day-number {
+		font-size: 12px;
+		color: #3c4043;
+		font-weight: 500;
+		width: 24px;
+		height: 24px;
+		line-height: 24px;
+		text-align: center;
+		border-radius: 50%;
+		text-decoration: none !important;
+		margin-top: 2px;
+	}
+
+	.fc-daygrid-day-number:hover {
+		background-color: #f1f3f4;
+		border-radius: 50%;
+	}
+
+	/* Today Highlight */
+	.fc-day-today {
+		background-color: transparent !important;
+	}
+
+	.fc-day-today .fc-daygrid-day-number {
+		background-color: #1a73e8;
+		color: #fff;
+	}
+
+	.fc-day-today .fc-daygrid-day-number:hover {
+		background-color: #1a73e8;
+	}
+
+	/* Events */
 	.fc-event {
-		border: none;
+		border: none !important;
 		border-radius: 4px;
-		padding: 2px 4px;
-		font-size: 0.85em;
-		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-		cursor: pointer;
-		transition: transform 0.1s;
+		padding: 2px 6px;
+		font-size: 12px;
+		font-weight: 500;
+		box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3);
+		margin: 1px 4px !important;
 	}
 
-	.fc-event:hover {
-		transform: translateY(-1px);
-		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+	.fc-h-event .fc-event-main {
+		color: #fff !important;
+		/* Ensure text is white on colored events */
 	}
 
 	/* Legend */
 	.shb-legend {
-		display: flex;
-		gap: 20px;
+		background: transparent;
+		border: none;
+		padding: 0;
 		margin-bottom: 20px;
-		padding: 12px;
-		background: #f8f9fa;
-		border-radius: 6px;
-		border: 1px solid #e0e0e0;
+		gap: 24px;
 	}
 
 	.shb-legend-item {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-		font-size: 13px;
-		color: #50575e;
+		font-family: inherit;
+		font-weight: 500;
+		color: #3c4043;
+		font-size: 14px;
 	}
 
-	.shb-dot {
-		width: 10px;
-		height: 10px;
-		border-radius: 50%;
-	}
-
-	/* Print Styles */
+	/* Print Styles Start Here */
 	@media print {
 
 		/* Global resets for print */
