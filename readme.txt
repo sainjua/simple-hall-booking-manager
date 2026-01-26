@@ -136,6 +136,10 @@ You can view all bookings in the admin panel. Export functionality is planned fo
 
 == Changelog ==
 
+= 1.1.1 - 2026-01-26 =
+* Fix: Timezone mismatch issue where saved slot time (e.g., 8 AM) was being displayed in local timezone (e.g., 1 AM). Now properly respects the stored wall-clock time in both admin and frontend.
+* Update: Bumped version for release.
+
 = 1.0.0 - 2025-01-01 =
 * Initial release
 * Hall management with capacity and cleaning buffer

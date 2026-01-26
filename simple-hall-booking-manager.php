@@ -3,7 +3,7 @@
  * Plugin Name: Simple Hall Booking Manager
  * Plugin URI: https://wordpress.org/plugins/simple-hall-booking-manager/
  * Description: A powerful, lightweight WordPress plugin to manage hall bookings with full-day vs partial slot logic, guest bookings (no login required), and a clean admin UI.
- * Version: 1.1.0
+ * Version: 1.1.1
  * Author: Yujesh K C
  * Author URI:       https://profiles.wordpress.org/sainjua/
  * Text Domain: simple-hall-booking-manager
@@ -21,7 +21,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('SHB_VERSION', '1.1.0');
+define('SHB_VERSION', '1.1.1');
 define('SHB_PLUGIN_FILE', __FILE__);
 define('SHB_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('SHB_PLUGIN_URL', plugin_dir_url(__FILE__));
