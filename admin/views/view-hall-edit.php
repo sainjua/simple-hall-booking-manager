@@ -90,9 +90,9 @@ $error_message = isset($_GET['error_message']) ? urldecode(sanitize_text_field($
 								</td>
 								<td><?php echo esc_html($slot->label); ?></td>
 								<td>
-									<?php echo esc_html(wp_date('g:i A', strtotime($slot->start_time))); ?>
+									<?php echo esc_html(wp_date('g:i A', strtotime($slot->start_time), new DateTimeZone('UTC'))); ?>
 									&ndash;
-									<?php echo esc_html(wp_date('g:i A', strtotime($slot->end_time))); ?>
+									<?php echo esc_html(wp_date('g:i A', strtotime($slot->end_time), new DateTimeZone('UTC'))); ?>
 								</td>
 								<td>
 									<?php echo $slot->is_active ? esc_html__('Active', 'simple-hall-booking-manager') : esc_html__('Inactive', 'simple-hall-booking-manager'); ?>

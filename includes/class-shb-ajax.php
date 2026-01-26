@@ -173,8 +173,8 @@ class SHB_AJAX
 				'id' => $slot->id,
 				'label' => $slot->label,
 				'type' => $slot->slot_type,
-				'start_time' => wp_date('g:i A', strtotime($slot->start_time)),
-				'end_time' => wp_date('g:i A', strtotime($slot->end_time)),
+				'start_time' => wp_date('g:i A', strtotime($slot->start_time), new DateTimeZone('UTC')),
+				'end_time' => wp_date('g:i A', strtotime($slot->end_time), new DateTimeZone('UTC')),
 			);
 		}
 
@@ -223,8 +223,8 @@ class SHB_AJAX
 					'id' => $slot->id,
 					'label' => $slot->label,
 					'type' => $slot->slot_type,
-					'start_time' => wp_date('g:i A', strtotime($slot->start_time)),
-					'end_time' => wp_date('g:i A', strtotime($slot->end_time)),
+					'start_time' => wp_date('g:i A', strtotime($slot->start_time), new DateTimeZone('UTC')),
+					'end_time' => wp_date('g:i A', strtotime($slot->end_time), new DateTimeZone('UTC')),
 				);
 			}
 
