@@ -519,7 +519,7 @@ if ('pending' === $booking->status) {
 											</td>
 											<td><?php echo esc_html(wp_date('l', strtotime($date_record->booking_date))); ?>
 											</td>
-											<td><?php echo $d_slot ? esc_html($d_slot->label . ' (' . wp_date('g:i A', strtotime($d_slot->start_time)) . ' - ' . wp_date('g:i A', strtotime($d_slot->end_time)) . ')') : '-'; ?>
+											<td><?php echo $d_slot ? esc_html($d_slot->label . ' (' . date('g:i A', strtotime($d_slot->start_time)) . ' - ' . date('g:i A', strtotime($d_slot->end_time)) . ')') : '-'; ?>
 											</td>
 										</tr>
 									<?php endforeach; ?>
@@ -539,7 +539,7 @@ if ('pending' === $booking->status) {
 										class="shb-label"><?php esc_html_e('Time Slot', 'simple-hall-booking-manager'); ?></span>
 									<span class="shb-value">
 										<?php if ($slot)
-											echo esc_html($slot->label . ' (' . wp_date('g:i A', strtotime($slot->start_time)) . ' - ' . wp_date('g:i A', strtotime($slot->end_time)) . ')');
+											echo esc_html($slot->label . ' (' . date('g:i A', strtotime($slot->start_time)) . ' - ' . date('g:i A', strtotime($slot->end_time)) . ')');
 										else
 											echo '-'; ?>
 									</span>

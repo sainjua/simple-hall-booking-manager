@@ -4,7 +4,7 @@ Tags: booking, hall booking, event booking, calendar, reservation
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.1.2
+Stable tag: 1.1.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -135,6 +135,17 @@ You can view all bookings in the admin panel. Export functionality is planned fo
 8. Frontend - Guest Booking Management
 
 == Changelog ==
+
+= 1.1.4 - 2026-01-26 =
+* Fix: Core timezone shift bug in slot time display. Times now properly show as stored "literal" values in all emails and admin views.
+* Improvement: Optimized mobile responsiveness for all frontend forms and calendars.
+* UI: Improved layout for small screens to use full-width horizontal space.
+* UI: Enhanced touch targets (min-height 44px) for better usability on smartphones.
+* UI: Refined calendar navigation buttons on mobile devices.
+* UI: Removed redundant padding across mobile containers to allow theme-level spacing integration.
+
+= 1.1.3 - 2026-01-26 =
+* Update: Minor internal version alignment.
 
 = 1.1.2 - 2026-01-26 =
 * Feature: Added Remarks field visibility throughout the booking lifecycle.

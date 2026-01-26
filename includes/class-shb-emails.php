@@ -113,7 +113,7 @@ class SHB_Emails
 		$first_date = !empty($booking_dates) ? reset($booking_dates) : null;
 		$replacements['{booking_date}'] = shb_format_date($first_date ? $first_date->booking_date : $booking->created_at);
 		// If slot is available, format it. If mixed slots in multiday, this shows the first one.
-		$replacements['{slot_time}'] = $slot ? $slot->label . ' (' . wp_date('g:i A', strtotime($slot->start_time)) . ' - ' . wp_date('g:i A', strtotime($slot->end_time)) . ')' : '-';
+		$replacements['{slot_time}'] = $slot ? $slot->label . ' (' . date('g:i A', strtotime($slot->start_time)) . ' - ' . date('g:i A', strtotime($slot->end_time)) . ')' : '-';
 
 		// Handle booking dates list
 		$dates_list = '';
@@ -352,7 +352,7 @@ class SHB_Emails
 							<strong><?php esc_html_e('Time:', 'simple-hall-booking-manager'); ?></strong>
 						</td>
 						<td style="padding: 10px; border: 1px solid #ddd;">
-							<?php echo $slot ? esc_html($slot->label . ' (' . wp_date('g:i A', strtotime($slot->start_time)) . ' - ' . wp_date('g:i A', strtotime($slot->end_time)) . ')') : '-'; ?>
+							<?php echo $slot ? esc_html($slot->label . ' (' . date('g:i A', strtotime($slot->start_time)) . ' - ' . date('g:i A', strtotime($slot->end_time)) . ')') : '-'; ?>
 						</td>
 					</tr>
 					<?php if (!empty($booking->remarks)): ?>
@@ -498,7 +498,7 @@ class SHB_Emails
 											<?php echo esc_html(shb_format_date($date_record->booking_date)); ?>
 											<?php if ($date_slot): ?>
 												<br><em style="font-size: 13px; color: #666;">
-													<?php echo esc_html($date_slot->label . ' - ' . wp_date('g:i A', strtotime($date_slot->start_time)) . ' to ' . wp_date('g:i A', strtotime($date_slot->end_time))); ?>
+													<?php echo esc_html($date_slot->label . ' - ' . date('g:i A', strtotime($date_slot->start_time)) . ' to ' . date('g:i A', strtotime($date_slot->end_time))); ?>
 												</em>
 											<?php endif; ?>
 										</li>
@@ -524,7 +524,7 @@ class SHB_Emails
 							<strong><?php esc_html_e('Time:', 'simple-hall-booking-manager'); ?></strong>
 						</td>
 						<td style="padding: 10px; border: 1px solid #ddd;">
-							<?php echo $slot ? esc_html($slot->label . ' (' . wp_date('g:i A', strtotime($slot->start_time)) . ' - ' . wp_date('g:i A', strtotime($slot->end_time)) . ')') : '-'; ?>
+							<?php echo $slot ? esc_html($slot->label . ' (' . date('g:i A', strtotime($slot->start_time)) . ' - ' . date('g:i A', strtotime($slot->end_time)) . ')') : '-'; ?>
 						</td>
 					</tr>
 					<?php if (!empty($booking->remarks)): ?>
@@ -641,9 +641,7 @@ class SHB_Emails
 						<td style="padding: 10px; background: #f5f5f5; border: 1px solid #ddd;">
 							<strong><?php esc_html_e('Time:', 'simple-hall-booking-manager'); ?></strong>
 						</td>
-						<td style="padding: 10px; border: 1px solid #ddd;">
-							<?php echo $slot ? esc_html($slot->label . ' (' . wp_date('g:i A', strtotime($slot->start_time)) . ' - ' . wp_date('g:i A', strtotime($slot->end_time)) . ')') : '-'; ?>
-						</td>
+						<?php echo $slot ? esc_html($slot->label . ' (' . date('g:i A', strtotime($slot->start_time)) . ' - ' . date('g:i A', strtotime($slot->end_time)) . ')') : '-'; ?>
 					</tr>
 					<?php if (!empty($booking->remarks)): ?>
 						<tr>
@@ -753,9 +751,7 @@ class SHB_Emails
 						<td style="padding: 10px; background: #f5f5f5; border: 1px solid #ddd;">
 							<strong><?php esc_html_e('Time:', 'simple-hall-booking-manager'); ?></strong>
 						</td>
-						<td style="padding: 10px; border: 1px solid #ddd;">
-							<?php echo $slot ? esc_html($slot->label . ' (' . wp_date('g:i A', strtotime($slot->start_time)) . ' - ' . wp_date('g:i A', strtotime($slot->end_time)) . ')') : '-'; ?>
-						</td>
+						<?php echo $slot ? esc_html($slot->label . ' (' . date('g:i A', strtotime($slot->start_time)) . ' - ' . date('g:i A', strtotime($slot->end_time)) . ')') : '-'; ?>
 					</tr>
 					<?php if (!empty($booking->remarks)): ?>
 						<tr>
