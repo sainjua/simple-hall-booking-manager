@@ -553,6 +553,7 @@ class SHB_Admin
 		$data = array(
 			'status' => $new_status,
 			'admin_notes' => isset($_POST['admin_notes']) ? wp_kses_post(wp_unslash($_POST['admin_notes'])) : '',
+			'remarks' => isset($_POST['remarks']) ? sanitize_textarea_field(wp_unslash($_POST['remarks'])) : '',
 		);
 
 		$db = shb()->db;

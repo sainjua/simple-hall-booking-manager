@@ -422,7 +422,8 @@ if ('pending' === $booking->status) {
 			<span class="dashicons dashicons-warning shb-conflict-icon"></span>
 			<div>
 				<h4 style="margin: 0 0 4px 0; color: #9a3412; font-size: 14px; font-weight: 600;">
-					<?php esc_html_e('Scheduling Conflicts Detected', 'simple-hall-booking-manager'); ?></h4>
+					<?php esc_html_e('Scheduling Conflicts Detected', 'simple-hall-booking-manager'); ?>
+				</h4>
 				<p style="margin: 0; color: #7c2d12; font-size: 13px; line-height: 1.5;">
 					<?php
 					/* translators: %d: number of conflicts */
@@ -499,11 +500,14 @@ if ('pending' === $booking->status) {
 								<thead>
 									<tr>
 										<th style="font-weight:600; color:#6b7280; font-size:12px;">
-											<?php esc_html_e('Date', 'simple-hall-booking-manager'); ?></th>
+											<?php esc_html_e('Date', 'simple-hall-booking-manager'); ?>
+										</th>
 										<th style="font-weight:600; color:#6b7280; font-size:12px;">
-											<?php esc_html_e('Day', 'simple-hall-booking-manager'); ?></th>
+											<?php esc_html_e('Day', 'simple-hall-booking-manager'); ?>
+										</th>
 										<th style="font-weight:600; color:#6b7280; font-size:12px;">
-											<?php esc_html_e('Time Slot', 'simple-hall-booking-manager'); ?></th>
+											<?php esc_html_e('Time Slot', 'simple-hall-booking-manager'); ?>
+										</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -573,6 +577,12 @@ if ('pending' === $booking->status) {
 									<?php echo esc_html(shb_format_date($booking->created_at) . ' at ' . wp_date('g:i A', strtotime($booking->created_at))); ?>
 								</span>
 							</div>
+							<div class="shb-data-item" style="grid-column: 1 / -1;">
+								<span
+									class="shb-label"><?php esc_html_e('Remarks', 'simple-hall-booking-manager'); ?></span>
+								<span
+									class="shb-value"><?php echo (!empty($booking->remarks)) ? nl2br(esc_html($booking->remarks)) : '-'; ?></span>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -626,6 +636,13 @@ if ('pending' === $booking->status) {
 										</option>
 									<?php endforeach; ?>
 								</select>
+							</div>
+
+							<div style="margin-bottom: 24px;">
+								<label class="shb-label"
+									for="remarks"><?php esc_html_e('Customer Remarks', 'simple-hall-booking-manager'); ?></label>
+								<textarea name="remarks" id="remarks" rows="3" class="shb-form-control"
+									placeholder="<?php esc_attr_e('Customer remarks...', 'simple-hall-booking-manager'); ?>"><?php echo isset($booking->remarks) ? esc_textarea($booking->remarks) : ''; ?></textarea>
 							</div>
 
 							<div style="margin-bottom: 24px;">

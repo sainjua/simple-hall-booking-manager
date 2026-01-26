@@ -113,7 +113,7 @@ $halls = $db->get_halls(array('status' => 'active'));
 
 		<div class="shb-form-group">
 			<label for="shb_customer_organization">
-				<?php esc_html_e('Organization', 'simple-hall-booking-manager'); ?>
+				<?php esc_html_e('Organization (If applicable)', 'simple-hall-booking-manager'); ?>
 			</label>
 			<input type="text" name="customer_organization" id="shb_customer_organization">
 		</div>
@@ -129,6 +129,14 @@ $halls = $db->get_halls(array('status' => 'active'));
 			</label>
 			<input type="text" name="event_purpose" id="shb_event_purpose"
 				placeholder="<?php esc_attr_e('e.g., Birthday Party, Meeting, Wedding', 'simple-hall-booking-manager'); ?>">
+		</div>
+
+		<div class="shb-form-group">
+			<label for="shb_remarks">
+				<?php esc_html_e('Remarks / Special Requests', 'simple-hall-booking-manager'); ?>
+			</label>
+			<textarea name="remarks" id="shb_remarks" rows="3"
+				placeholder="<?php esc_attr_e('Any special requirements or additional information...', 'simple-hall-booking-manager'); ?>"></textarea>
 		</div>
 
 		<div class="shb-form-group">

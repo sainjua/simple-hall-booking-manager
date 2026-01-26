@@ -176,6 +176,7 @@ class SHB_DB
 		access_token varchar(64) NOT NULL,
 		pin varchar(6) NOT NULL COMMENT 'Format: AA1111 (2 letters + 4 digits)',
 		admin_notes text,
+		remarks text DEFAULT NULL,
 		created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
 		updated_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 		PRIMARY KEY (id),
@@ -247,6 +248,12 @@ class SHB_DB
 		if (version_compare($db_version, '1.4.1', '<')) {
 			$this->migrate_to_v140();
 			update_option('shb_db_version', '1.4.1');
+		}
+
+		// Migration for v1.5.0 (add remarks column)
+		if (version_compare($db_version, '1.5.0', '<')) {
+			$this->migrate_to_v150();
+			update_option('shb_db_version', '1.5.0');
 		}
 	}
 
@@ -434,6 +441,33 @@ class SHB_DB
 				"ALTER TABLE {$table_bookings} 
 				ADD COLUMN customer_organization varchar(255) DEFAULT NULL 
 				AFTER customer_phone"
+			);
+		}
+	}
+
+	/**
+	 * Migrate database to v1.5.0
+	 * Adds remarks column to bookings table
+	 */
+	private function migrate_to_v150()
+	{
+		$table_bookings = $this->get_table_bookings();
+
+		// Check if remarks column exists
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name must be interpolated
+		$sql = "SHOW COLUMNS FROM {$table_bookings} LIKE %s";
+		// phpcs:ignore PluginCheck.Security.DirectDB.UnescapedDBParameter
+		$column_exists = $this->wpdb->get_results(
+			$this->wpdb->prepare($sql, 'remarks') // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		);
+
+		// Add remarks column if it doesn't exist
+		if (empty($column_exists)) {
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
+			$this->wpdb->query(
+				"ALTER TABLE {$table_bookings} 
+				ADD COLUMN remarks text DEFAULT NULL 
+				AFTER event_purpose"
 			);
 		}
 	}
@@ -877,6 +911,7 @@ class SHB_DB
 			'pin' => '',
 			'booking_type' => 'single',
 			'admin_notes' => '',
+			'remarks' => '',
 		);
 
 		$data = wp_parse_args($data, $defaults);
@@ -896,8 +931,9 @@ class SHB_DB
 				'access_token' => sanitize_text_field($data['access_token']),
 				'pin' => strtoupper(sanitize_text_field($data['pin'])),
 				'admin_notes' => wp_kses_post($data['admin_notes']),
+				'remarks' => sanitize_textarea_field($data['remarks']),
 			),
-			array('%d', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%s', '%s', '%s', '%s')
+			array('%d', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%s', '%s', '%s', '%s', '%s')
 		);
 
 		return $result ? $this->wpdb->insert_id : false;
@@ -941,6 +977,7 @@ class SHB_DB
 			'attendees_count' => '%d',
 			'status' => '%s',
 			'admin_notes' => '%s',
+			'remarks' => '%s',
 		);
 
 		foreach ($allowed_fields as $field => $field_format) {
@@ -955,6 +992,9 @@ class SHB_DB
 					$update_data[$field] = absint($data[$field]);
 				} else {
 					$update_data[$field] = sanitize_text_field($data[$field]);
+				}
+				if ('remarks' === $field) {
+					$update_data[$field] = sanitize_textarea_field($data[$field]);
 				}
 				$format[] = $field_format;
 			}
@@ -1179,7 +1219,6 @@ class SHB_DB
 			}
 		}
 
-		// Generate unique token and PIN
 		$booking_data['access_token'] = shb_generate_token(32);
 		$booking_data['pin'] = $this->generate_unique_pin();
 		$booking_data['booking_type'] = 'multiday';
@@ -1194,13 +1233,14 @@ class SHB_DB
 				'customer_email' => sanitize_email($booking_data['customer_email']),
 				'customer_phone' => sanitize_text_field($booking_data['customer_phone'] ?? ''),
 				'event_purpose' => sanitize_text_field($booking_data['event_purpose'] ?? ''),
+				'remarks' => sanitize_textarea_field($booking_data['remarks'] ?? ''),
 				'attendees_count' => absint($booking_data['attendees_count'] ?? 0),
 				'status' => 'pending',
 				'access_token' => $booking_data['access_token'],
 				'pin' => $booking_data['pin'],
 				'admin_notes' => '',
 			),
-			array('%d', '%s', '%s', '%s', '%s', '%s', '%d', '%s', '%s', '%s', '%s')
+			array('%d', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%s', '%s', '%s', '%s')
 		);
 
 		if (!$result) {
@@ -1270,13 +1310,14 @@ class SHB_DB
 				'customer_email' => sanitize_email($booking_data['customer_email']),
 				'customer_phone' => sanitize_text_field($booking_data['customer_phone'] ?? ''),
 				'event_purpose' => sanitize_text_field($booking_data['event_purpose'] ?? ''),
+				'remarks' => sanitize_textarea_field($booking_data['remarks'] ?? ''),
 				'attendees_count' => absint($booking_data['attendees_count'] ?? 0),
 				'status' => 'pending',
 				'access_token' => $booking_data['access_token'],
 				'pin' => $pin,
 				'admin_notes' => '',
 			),
-			array('%d', '%s', '%s', '%s', '%s', '%s', '%d', '%s', '%s', '%s', '%s')
+			array('%d', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%s', '%s', '%s', '%s', '%s')
 		);
 
 		if (!$result) {
@@ -1403,7 +1444,7 @@ class SHB_DB
 		// because each date in a multi-day booking can have a different slot
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names must be interpolated
 		$sql = "SELECT b.id, b.hall_id, d.slot_id, d.booking_date, b.customer_name, 
-			       b.customer_email, b.customer_phone, b.event_purpose, 
+			       b.customer_email, b.customer_phone, b.event_purpose, b.remarks,
 			       b.attendees_count, b.status, b.access_token, b.pin, 
 			       b.admin_notes, b.created_at, b.booking_type
 			FROM {$table_bookings} b
@@ -1422,7 +1463,7 @@ class SHB_DB
 		// Now also using booking_dates table for consistency
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names must be interpolated
 		$sql = "SELECT b.id, b.hall_id, d.slot_id, d.booking_date, b.customer_name, 
-			       b.customer_email, b.customer_phone, b.event_purpose, 
+			       b.customer_email, b.customer_phone, b.event_purpose, b.remarks,
 			       b.attendees_count, b.status, b.access_token, b.pin, 
 			       b.admin_notes, b.created_at, b.booking_type
 			FROM {$table_bookings} b

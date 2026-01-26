@@ -201,6 +201,12 @@ if (isset($_POST['shb_cancel_booking']) && wp_verify_nonce($_POST['shb_cancel_no
 						<span class="shb-value"><?php echo esc_html($booking->attendees_count); ?></span>
 					</div>
 				<?php endif; ?>
+				<?php if (!empty($booking->remarks)): ?>
+					<div class="shb-info-item">
+						<span class="shb-label"><?php esc_html_e('Remarks', 'simple-hall-booking-manager'); ?></span>
+						<span class="shb-value"><?php echo nl2br(esc_html($booking->remarks)); ?></span>
+					</div>
+				<?php endif; ?>
 			</div>
 		</div>
 	</div>

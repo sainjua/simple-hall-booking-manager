@@ -733,6 +733,9 @@
 							if (response.data.access_url) {
 								var accessHtml = '<div class="shb-notice shb-notice-info" style="margin-top: 15px;">';
 								accessHtml += '<p><strong>Booking Received!</strong></p>';
+								if (response.data.remarks) {
+									accessHtml += '<p><strong>Your Remarks:</strong><br><small>' + response.data.remarks.replace(/\n/g, '<br>') + '</small></p>';
+								}
 								accessHtml += '<p style="margin: 15px 0;"><a href="' + response.data.access_url + '" target="_blank" class="shb-btn shb-btn-primary" style="color: #fff; text-decoration: none;">View Your Booking</a></p>';
 								accessHtml += '<p><small>Please save this link to view or manage your booking.</small></p>';
 								accessHtml += '</div>';

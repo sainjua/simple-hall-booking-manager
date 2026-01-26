@@ -4,7 +4,7 @@ Tags: booking, hall booking, event booking, calendar, reservation
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.4.1
+Stable tag: 1.1.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -135,6 +135,13 @@ You can view all bookings in the admin panel. Export functionality is planned fo
 8. Frontend - Guest Booking Management
 
 == Changelog ==
+
+= 1.1.2 - 2026-01-26 =
+* Feature: Added Remarks field visibility throughout the booking lifecycle.
+* Feature: Remarks now included in Admin and Guest email notifications.
+* Feature: Added Remarks column to the Admin Bookings list dashboard.
+* Feature: Displayed submitted Remarks in the immediate success message on the frontend.
+* Feature: Added Remarks section to the User Booking details (Guest access page).
 
 = 1.1.1 - 2026-01-26 =
 * Fix: Timezone mismatch issue where saved slot time (e.g., 8 AM) was being displayed in local timezone (e.g., 1 AM). Now properly respects the stored wall-clock time in both admin and frontend.

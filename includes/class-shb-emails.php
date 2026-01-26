@@ -64,13 +64,14 @@ class SHB_Emails
 		}
 
 		$hall = $db->get_hall($booking->hall_id);
-		$slot = $db->get_slot($booking->slot_id);
 
-		// Get dates for multiday bookings
-		$booking_dates = array();
-		if ('multiday' === $booking->booking_type) {
-			$booking_dates = $db->get_booking_dates($booking->id);
-		}
+		// Get dates for multiday (and single) bookings
+		$booking_dates = $db->get_booking_dates($booking->id);
+
+		// For slot info, we take the first date's slot
+		// In multi-day, this might vary per date, but we need a 'primary' slot for the email header/summary
+		$first_date = !empty($booking_dates) ? reset($booking_dates) : null;
+		$slot = $first_date ? $db->get_slot($first_date->slot_id) : null;
 
 		return array(
 			'booking' => $booking,
@@ -104,11 +105,15 @@ class SHB_Emails
 			'{pin}' => $booking->pin,
 			'{access_url}' => shb_get_booking_access_url($booking->access_token),
 			'{admin_email}' => get_option('admin_email'),
+			'{remarks}' => (!empty($booking->remarks)) ? nl2br(esc_html($booking->remarks)) : '-',
 		);
 
+
 		// Format dates and times
-		$replacements['{booking_date}'] = shb_format_date($booking->booking_date);
-		$replacements['{slot_time}'] = $slot->label . ' (' . wp_date('g:i A', strtotime($slot->start_time)) . ' - ' . wp_date('g:i A', strtotime($slot->end_time)) . ')';
+		$first_date = !empty($booking_dates) ? reset($booking_dates) : null;
+		$replacements['{booking_date}'] = shb_format_date($first_date ? $first_date->booking_date : $booking->created_at);
+		// If slot is available, format it. If mixed slots in multiday, this shows the first one.
+		$replacements['{slot_time}'] = $slot ? $slot->label . ' (' . wp_date('g:i A', strtotime($slot->start_time)) . ' - ' . wp_date('g:i A', strtotime($slot->end_time)) . ')' : '-';
 
 		// Handle booking dates list
 		$dates_list = '';
@@ -119,7 +124,7 @@ class SHB_Emails
 			}
 			$dates_list .= '</ul>';
 		} else {
-			$dates_list .= shb_format_date($booking->booking_date);
+			$dates_list .= shb_format_date($first_date ? $first_date->booking_date : '');
 		}
 		$replacements['{booking_dates_list}'] = $dates_list;
 
@@ -336,7 +341,10 @@ class SHB_Emails
 							<strong><?php esc_html_e('Date:', 'simple-hall-booking-manager'); ?></strong>
 						</td>
 						<td style="padding: 10px; border: 1px solid #ddd;">
-							<?php echo esc_html(shb_format_date($booking->booking_date)); ?>
+							<?php
+							$first_date = !empty($booking_dates) ? reset($booking_dates) : null;
+							echo esc_html(shb_format_date($first_date ? $first_date->booking_date : ''));
+							?>
 						</td>
 					</tr>
 					<tr>
@@ -344,9 +352,18 @@ class SHB_Emails
 							<strong><?php esc_html_e('Time:', 'simple-hall-booking-manager'); ?></strong>
 						</td>
 						<td style="padding: 10px; border: 1px solid #ddd;">
-							<?php echo esc_html($slot->label . ' (' . wp_date('g:i A', strtotime($slot->start_time)) . ' - ' . wp_date('g:i A', strtotime($slot->end_time)) . ')'); ?>
+							<?php echo $slot ? esc_html($slot->label . ' (' . wp_date('g:i A', strtotime($slot->start_time)) . ' - ' . wp_date('g:i A', strtotime($slot->end_time)) . ')') : '-'; ?>
 						</td>
 					</tr>
+					<?php if (!empty($booking->remarks)): ?>
+						<tr>
+							<td style="padding: 10px; background: #f5f5f5; border: 1px solid #ddd;">
+								<strong><?php esc_html_e('Remarks:', 'simple-hall-booking-manager'); ?></strong>
+							</td>
+							<td style="padding: 10px; border: 1px solid #ddd;"><?php echo nl2br(esc_html($booking->remarks)); ?>
+							</td>
+						</tr>
+					<?php endif; ?>
 					<tr>
 						<td style="padding: 10px; background: #f5f5f5; border: 1px solid #ddd;">
 							<strong><?php esc_html_e('Customer:', 'simple-hall-booking-manager'); ?></strong>
@@ -386,6 +403,15 @@ class SHB_Emails
 								<strong><?php esc_html_e('Attendees:', 'simple-hall-booking-manager'); ?></strong>
 							</td>
 							<td style="padding: 10px; border: 1px solid #ddd;"><?php echo esc_html($booking->attendees_count); ?>
+							</td>
+						</tr>
+					<?php endif; ?>
+					<?php if (!empty($booking->remarks)): ?>
+						<tr>
+							<td style="padding: 10px; background: #f5f5f5; border: 1px solid #ddd;">
+								<strong><?php esc_html_e('Remarks:', 'simple-hall-booking-manager'); ?></strong>
+							</td>
+							<td style="padding: 10px; border: 1px solid #ddd;"><?php echo nl2br(esc_html($booking->remarks)); ?>
 							</td>
 						</tr>
 					<?php endif; ?>
@@ -486,7 +512,10 @@ class SHB_Emails
 								<strong><?php esc_html_e('Date:', 'simple-hall-booking-manager'); ?></strong>
 							</td>
 							<td style="padding: 10px; border: 1px solid #ddd;">
-								<?php echo esc_html(shb_format_date($booking->booking_date)); ?>
+								<?php
+								$first_date = !empty($booking_dates) ? reset($booking_dates) : null;
+								echo esc_html(shb_format_date($first_date ? $first_date->booking_date : ''));
+								?>
 							</td>
 						</tr>
 					<?php endif; ?>
@@ -495,9 +524,18 @@ class SHB_Emails
 							<strong><?php esc_html_e('Time:', 'simple-hall-booking-manager'); ?></strong>
 						</td>
 						<td style="padding: 10px; border: 1px solid #ddd;">
-							<?php echo esc_html($slot->label . ' (' . wp_date('g:i A', strtotime($slot->start_time)) . ' - ' . wp_date('g:i A', strtotime($slot->end_time)) . ')'); ?>
+							<?php echo $slot ? esc_html($slot->label . ' (' . wp_date('g:i A', strtotime($slot->start_time)) . ' - ' . wp_date('g:i A', strtotime($slot->end_time)) . ')') : '-'; ?>
 						</td>
 					</tr>
+					<?php if (!empty($booking->remarks)): ?>
+						<tr>
+							<td style="padding: 10px; background: #f5f5f5; border: 1px solid #ddd;">
+								<strong><?php esc_html_e('Remarks:', 'simple-hall-booking-manager'); ?></strong>
+							</td>
+							<td style="padding: 10px; border: 1px solid #ddd;"><?php echo nl2br(esc_html($booking->remarks)); ?>
+							</td>
+						</tr>
+					<?php endif; ?>
 					<tr>
 						<td style="padding: 10px; background: #f5f5f5; border: 1px solid #ddd;">
 							<strong><?php esc_html_e('Status:', 'simple-hall-booking-manager'); ?></strong>
@@ -592,7 +630,11 @@ class SHB_Emails
 							<strong><?php esc_html_e('Date:', 'simple-hall-booking-manager'); ?></strong>
 						</td>
 						<td style="padding: 10px; border: 1px solid #ddd;">
-							<?php echo esc_html(shb_format_date($booking->booking_date)); ?>
+							<?php
+							$dates = shb()->db->get_booking_dates($booking->id);
+							$first_date = !empty($dates) ? reset($dates) : null;
+							echo esc_html(shb_format_date($first_date ? $first_date->booking_date : ''));
+							?>
 						</td>
 					</tr>
 					<tr>
@@ -600,9 +642,18 @@ class SHB_Emails
 							<strong><?php esc_html_e('Time:', 'simple-hall-booking-manager'); ?></strong>
 						</td>
 						<td style="padding: 10px; border: 1px solid #ddd;">
-							<?php echo esc_html($slot->label . ' (' . wp_date('g:i A', strtotime($slot->start_time)) . ' - ' . wp_date('g:i A', strtotime($slot->end_time)) . ')'); ?>
+							<?php echo $slot ? esc_html($slot->label . ' (' . wp_date('g:i A', strtotime($slot->start_time)) . ' - ' . wp_date('g:i A', strtotime($slot->end_time)) . ')') : '-'; ?>
 						</td>
 					</tr>
+					<?php if (!empty($booking->remarks)): ?>
+						<tr>
+							<td style="padding: 10px; background: #f5f5f5; border: 1px solid #ddd;">
+								<strong><?php esc_html_e('Remarks:', 'simple-hall-booking-manager'); ?></strong>
+							</td>
+							<td style="padding: 10px; border: 1px solid #ddd;"><?php echo nl2br(esc_html($booking->remarks)); ?>
+							</td>
+						</tr>
+					<?php endif; ?>
 					<tr>
 						<td style="padding: 10px; background: #f5f5f5; border: 1px solid #ddd;">
 							<strong><?php esc_html_e('Status:', 'simple-hall-booking-manager'); ?></strong>
@@ -691,7 +742,11 @@ class SHB_Emails
 							<strong><?php esc_html_e('Date:', 'simple-hall-booking-manager'); ?></strong>
 						</td>
 						<td style="padding: 10px; border: 1px solid #ddd;">
-							<?php echo esc_html(shb_format_date($booking->booking_date)); ?>
+							<?php
+							$dates = shb()->db->get_booking_dates($booking->id);
+							$first_date = !empty($dates) ? reset($dates) : null;
+							echo esc_html(shb_format_date($first_date ? $first_date->booking_date : ''));
+							?>
 						</td>
 					</tr>
 					<tr>
@@ -699,9 +754,18 @@ class SHB_Emails
 							<strong><?php esc_html_e('Time:', 'simple-hall-booking-manager'); ?></strong>
 						</td>
 						<td style="padding: 10px; border: 1px solid #ddd;">
-							<?php echo esc_html($slot->label . ' (' . wp_date('g:i A', strtotime($slot->start_time)) . ' - ' . wp_date('g:i A', strtotime($slot->end_time)) . ')'); ?>
+							<?php echo $slot ? esc_html($slot->label . ' (' . wp_date('g:i A', strtotime($slot->start_time)) . ' - ' . wp_date('g:i A', strtotime($slot->end_time)) . ')') : '-'; ?>
 						</td>
 					</tr>
+					<?php if (!empty($booking->remarks)): ?>
+						<tr>
+							<td style="padding: 10px; background: #f5f5f5; border: 1px solid #ddd;">
+								<strong><?php esc_html_e('Remarks:', 'simple-hall-booking-manager'); ?></strong>
+							</td>
+							<td style="padding: 10px; border: 1px solid #ddd;"><?php echo nl2br(esc_html($booking->remarks)); ?>
+							</td>
+						</tr>
+					<?php endif; ?>
 					<tr>
 						<td style="padding: 10px; background: #f5f5f5; border: 1px solid #ddd;">
 							<strong><?php esc_html_e('Status:', 'simple-hall-booking-manager'); ?></strong>

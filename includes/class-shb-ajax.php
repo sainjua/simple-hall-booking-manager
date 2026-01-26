@@ -358,6 +358,7 @@ class SHB_AJAX
 		$customer_phone = isset($_POST['customer_phone']) ? sanitize_text_field(wp_unslash($_POST['customer_phone'])) : '';
 		$customer_organization = isset($_POST['customer_organization']) ? sanitize_text_field(wp_unslash($_POST['customer_organization'])) : '';
 		$event_purpose = isset($_POST['event_purpose']) ? sanitize_text_field(wp_unslash($_POST['event_purpose'])) : '';
+		$remarks = isset($_POST['remarks']) ? sanitize_textarea_field(wp_unslash($_POST['remarks'])) : '';
 		$attendees_count = isset($_POST['attendees_count']) ? absint($_POST['attendees_count']) : 0;
 
 		// For multiday, extract dates and validate
@@ -590,6 +591,7 @@ class SHB_AJAX
 			'customer_phone' => $customer_phone,
 			'customer_organization' => $customer_organization,
 			'event_purpose' => $event_purpose,
+			'remarks' => $remarks,
 			'attendees_count' => $attendees_count,
 			'status' => 'pending',
 		);
@@ -665,6 +667,7 @@ class SHB_AJAX
 				'access_token' => $booking->access_token,
 				'access_url' => shb_get_booking_access_url($booking->access_token),
 				'redirect_url' => $redirect_url,
+				'remarks' => $booking->remarks,
 			)
 		);
 	}

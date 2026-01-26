@@ -401,6 +401,7 @@ function shb_sort_link($id, $label, $current_orderby, $current_order)
 					<th><?php echo wp_kses_post(shb_sort_link('customer_name', __('Customer', 'simple-hall-booking-manager'), $orderby, $order)); ?>
 					</th>
 					<th><?php esc_html_e('Status', 'simple-hall-booking-manager'); ?></th>
+					<th><?php esc_html_e('Remarks', 'simple-hall-booking-manager'); ?></th>
 					<th><?php esc_html_e('Actions', 'simple-hall-booking-manager'); ?></th>
 				</tr>
 			</thead>
@@ -481,6 +482,15 @@ function shb_sort_link($id, $label, $current_orderby, $current_order)
 									printf(esc_html__('%d conflict(s)', 'simple-hall-booking-manager'), absint($conflict_count));
 									?>
 								</div>
+							<?php endif; ?>
+						</td>
+						<td>
+							<?php if (!empty($booking->remarks)): ?>
+								<span title="<?php echo esc_attr($booking->remarks); ?>">
+									<?php echo esc_html(wp_trim_words($booking->remarks, 10)); ?>
+								</span>
+							<?php else: ?>
+								-
 							<?php endif; ?>
 						</td>
 						<td class="shb-actions">
