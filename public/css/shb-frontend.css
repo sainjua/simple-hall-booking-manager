@@ -442,34 +442,180 @@
 	border-top: 2px solid #eee;
 }
 
-/* Responsive */
+/* Responsive Adjustments */
+@media screen and (max-width: 992px) {
+
+	.shb-hall-list.shb-columns-3,
+	.shb-hall-list.shb-columns-4 {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+
 @media screen and (max-width: 768px) {
 
+	.shb-hall-list.shb-columns-2,
 	.shb-hall-list.shb-columns-3,
 	.shb-hall-list.shb-columns-4 {
 		grid-template-columns: 1fr;
 	}
 
-	.shb-hall-list.shb-columns-2 {
-		grid-template-columns: 1fr;
-	}
-
 	.shb-booking-form-wrapper,
-	.shb-user-booking {
-		padding: 20px;
-		margin: 20px;
+	.shb-user-booking,
+	.shb-pin-lookup-form {
+		padding: 0;
+		margin: 0;
+		width: 100%;
+		max-width: 100%;
+		border-radius: 0;
+		box-shadow: none;
+		border: none;
 	}
 
-	.shb-slot-options {
+	.shb-form-group {
+		margin-bottom: 12px;
+	}
+
+	.shb-form-group label {
+		margin-bottom: 4px;
+		font-size: 15px;
+	}
+
+	.shb-booking-form h3 {
+		margin-top: 20px;
+		font-size: 18px;
+	}
+
+	.shb-calendar-header {
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+		padding: 0 5px;
+	}
+
+	.shb-cal-month-year {
+		order: 0;
+		font-size: 15px;
+	}
+
+	.shb-calendar-grid {
+		gap: 2px;
+	}
+
+	.shb-cal-day {
+		padding: 12px 2px;
+		/* Taller touch targets */
+		font-size: 13px;
+	}
+
+	.shb-cal-day-header {
+		padding: 5px;
+		font-size: 11px;
+	}
+
+	.shb-date-indicator {
+		width: 4px;
+		height: 4px;
+	}
+
+	.shb-calendar-legend {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: 10px;
+		padding: 12px;
+	}
+
+	.shb-legend-item {
+		justify-content: flex-start;
+	}
+
+	/* Stack date selection rows on mobile */
+	.shb-date-slot-row {
 		grid-template-columns: 1fr;
+		gap: 10px;
+		padding: 15px;
+		position: relative;
+		padding-right: 50px;
+	}
+
+	.shb-dates-header {
+		display: none;
+		/* Hide complex header on mobile */
+	}
+
+	.shb-remove-date {
+		position: absolute;
+		top: 15px;
+		right: 10px;
+	}
+
+	.shb-single-date-selection .shb-date-info {
+		grid-template-columns: 1fr auto;
+		padding: 12px;
+	}
+
+	.shb-single-date-display {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 20px;
+		padding: 15px;
+	}
+
+	.shb-big-date {
+		width: 100%;
+		flex-direction: row;
+		justify-content: center;
+		gap: 10px;
+		min-width: auto;
+	}
+
+	.shb-day {
+		font-size: 28px;
+	}
+
+	.shb-month-year {
+		margin-top: 0;
+		font-size: 14px;
+	}
+
+	.shb-time-info {
+		width: 100%;
+		text-align: center;
 	}
 
 	.shb-detail-row {
 		flex-direction: column;
+		gap: 5px;
 	}
 
 	.shb-detail-label {
-		margin-bottom: 5px;
+		flex: none;
+	}
+}
+
+@media screen and (max-width: 480px) {
+	.shb-cal-day {
+		padding: 12px 2px;
+	}
+
+	.shb-btn-large {
+		font-size: 16px;
+		padding: 12px 20px;
+	}
+
+	.shb-booking-header {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 10px;
+		padding: 20px;
+	}
+
+	.shb-booking-id {
+		align-self: flex-start;
+	}
+
+	.shb-pin-code {
+		font-size: 24px;
+		letter-spacing: 2px;
 	}
 }
 
@@ -492,6 +638,22 @@
 @keyframes shb-spin {
 	to {
 		transform: rotate(360deg);
+	}
+}
+
+/* Extra touch target improvements for mobile */
+@media (pointer: coarse) {
+
+	.shb-cal-day,
+	.shb-btn,
+	.shb-slot-select,
+	.shb-form-group input,
+	.shb-form-group select {
+		min-height: 44px;
+	}
+
+	.shb-cal-day {
+		min-width: 40px;
 	}
 }
 
@@ -1052,7 +1214,9 @@
 
 	.shb-calendar,
 	.shb-multiday-calendar {
-		padding: 10px;
+		padding: 0;
+		margin: 0;
+		border: none;
 	}
 
 	/* Hide header on mobile */
